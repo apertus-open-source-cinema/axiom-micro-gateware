@@ -1,0 +1,2 @@
+-e git+http://github.com/m-labs/migen.git#egg=migen
+pytest

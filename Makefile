@@ -1,5 +1,18 @@
-all:
-	xzcat test_shifted.txt.xz > test_shifted.txt
-	./addr_gen.py
-	./convert_data.py
-	./hispi_decoder.py
+verilog: verilog/convert_data.v
+
+verilog/%.v: cores/%.py
+	mkdir -p verilog
+	python migen2verilog.py $< $@
+
+
+
+test: test_data/test_shifted.txt
+	pytest
+
+test_data/test_shifted.txt: test_data/test_shifted.txt.xz
+	xzcat $< > $@
+
+
+.PHONY: clean
+clean:
+	rm -rf verilog/

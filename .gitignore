@@ -1,2 +1,5 @@
-*.v
-test_shifted.txt
+verilog/*
+test_data/test_shifted.txt
+.idea/*
+.pytest_cache/
+__pycache__/
