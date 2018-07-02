@@ -6,11 +6,15 @@ verilog/%.v: cores/%.py
 
 
 
-test: test_data/test_shifted.txt
+test: test_data/test_shifted.txt test_data/test_convert.txt
 	pytest
 
-test_data/test_shifted.txt: test_data/test_shifted.txt.xz
+test_data/%.txt : test_data/%.txt.xz
 	xzcat $< > $@
+
+
+# test#_data/test_shifted.txt: test_data/test_shifted.txt.xz
+#	xzcat $< > $@
 
 
 .PHONY: clean

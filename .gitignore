@@ -1,4 +1,5 @@
 test_data/test_shifted.txt
+test_data/test_convert.txt
 .idea/*
 .venv
 .pytest_cache/
