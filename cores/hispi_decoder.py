@@ -107,43 +107,6 @@ class HispiPhy(Module):
         self.comb += self.aligned.eq(reduce(lambda a, b: a & b, lane_aligned[1:], lane_aligned[0]))
 
 
-def test_hispi_phy():
-    dut = HispiDecoder()
-
-    def testbench_phy():
-        f = open("test_data/test_shifted.txt")
-
-        i = 0
-        frames = 0
-        valid_data = 0
-
-        for line in f:
-            i += 1
-            if i > 10000:
-                break
-
-            words = [int(x, 2) for x in line.strip().split(' ')]
-
-            word_input = 0
-            for w in range(4):
-                word_input |= (words[w] << (12 * w))
-
-            for w in range(4):
-                yield dut.in_data.eq(word_input)
-            yield
-
-            if (yield dut.frame_start):
-                frames += 1
-
-            if (yield dut.data_valid):
-                valid_data += 4
-
-        assert frames == 1
-        assert valid_data == 29952
-
-    run_simulation(dut, testbench_phy())
-
-
 class HispiDecoder(Module):
     def __init__(self, num_lanes=4, buffer_depth=9, hispi_bits=12, output_bits=8):
         self.inputs = [Signal(hispi_bits) for i in range(num_lanes)]
@@ -241,7 +204,46 @@ class HispiDecoder(Module):
                    ))
 
 
-def test_hispi_decoder():
+def test_with_sample_data():
+    dut = HispiDecoder()
+
+    def testbench():
+        f = open("test_data/test_shifted.txt")
+
+        i = 0
+        frames = 0
+        valid_data = 0
+
+        for line in f:
+            i += 1
+            if i > 10000:
+                break
+
+            words = [int(x, 2) for x in line.strip().split(' ')]
+
+            word_input = 0
+            for w in range(4):
+                word_input |= (words[w] << (12 * w))
+
+            for w in range(4):
+                yield dut.in_data.eq(word_input)
+            yield
+
+            if (yield dut.frame_start):
+                frames += 1
+
+            if (yield dut.data_valid):
+                valid_data += 4
+
+        assert frames == 1
+        assert valid_data == 29952
+
+    run_simulation(dut, testbench())
+
+
+def test_hispi_lane():
+    device = HispiLane(8)
+
     def testbench():
         v = 0b110001000111111000111010101010101010111111011001100000000000000011001101110111010110110101011101101000000000000000011111111001010101011
 
@@ -268,23 +270,19 @@ def test_hispi_decoder():
 
             while w > 0:
                 if new:
-                    yield dut.reset.eq(1)
+                    yield device.reset.eq(1)
                     new = False
                 else:
-                    yield dut.reset.eq(0)
+                    yield device.reset.eq(0)
 
-                yield dut.word_in.eq(w)
+                yield device.word_in.eq(w)
                 yield
 
-                print("offset", i, "value", hex((yield dut.word_out)))
-                print()
-
-                if ((yield dut.aligned)):
+                if (yield device.aligned):
                     print("aligned :)")
-                    assert ((yield dut.word_out) == expected[j])
+                    assert ((yield device.word_out) == expected[j])
                     j += 1
 
                 w = w >> 8
 
-    dut = HispiDecoder()
-    run_simulation(dut, testbench())
+    run_simulation(device, testbench())
