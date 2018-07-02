@@ -1,5 +1,6 @@
 verilog/*
 test_data/test_shifted.txt
+test_data/test_convert.txt
 .idea/*
 .pytest_cache/
 __pycache__/
