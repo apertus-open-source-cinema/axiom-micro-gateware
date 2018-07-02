@@ -139,7 +139,7 @@ def test_hispi_phy():
                 print(bin((yield dut.outputs[2])), end=" ")
                 print(bin((yield dut.outputs[3])), end="\n")
 
-    run_simulation(dut, testbench_phy(), vcd_name="out.vcd")
+    run_simulation(dut, testbench_phy())
 
 
 class HispiDecoder(Module):

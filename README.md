@@ -1,4 +1,5 @@
 # AXIOM micro gateware
+![build status](https://api.travis-ci.org/axiom-micro/gateware.svg?branch=master)
 gateware for the main fpga, including a hispi decoder and image processing.
 
 The FPGA design is build using [migen](https://github.com/m-labs/migen)

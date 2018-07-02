@@ -30,12 +30,12 @@ def test_convert_data():
     device = ConvertData()
 
     def testbench():
-        yield device.in_data.eq(0b010101010101010101010101)
+        yield device.in_data.eq(0b0101_0101_0101_0101_0101_0101)
         yield
-        yield device.in_data.eq(0b101010101010101010101010)
+        yield device.in_data.eq(0b1010_1010_1010_1010_1010_1010)
         yield
         yield
 
-        assert (yield device.output) == 0b000000111111111111000000000000111111111111000000
+        assert (yield device.output) == 0b000000111111_111111000000_000000111111_111111000000
 
     run_simulation(device, testbench())

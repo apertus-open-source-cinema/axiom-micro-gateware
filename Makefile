@@ -1,4 +1,4 @@
-verilog: verilog/convert_data.v
+verilog: $(shell find cores/*.py | sed -r 's|cores/(.*)\.py|verilog/\1.v|g')
 
 verilog/%.v: cores/%.py
 	mkdir -p verilog
