@@ -114,11 +114,13 @@ def test_hispi_phy():
         f = open("test_data/test_shifted.txt")
 
         i = 0
+        frames = 0
+        valid_data = 0
 
         for line in f:
             i += 1
             if i > 10000:
-                return
+                break
 
             words = [int(x, 2) for x in line.strip().split(' ')]
 
@@ -131,13 +133,13 @@ def test_hispi_phy():
             yield
 
             if (yield dut.frame_start):
-                print("new frame")
+                frames += 1
 
             if (yield dut.data_valid):
-                print(bin((yield dut.outputs[0])), end=" ")
-                print(bin((yield dut.outputs[1])), end=" ")
-                print(bin((yield dut.outputs[2])), end=" ")
-                print(bin((yield dut.outputs[3])), end="\n")
+                valid_data += 4
+
+        assert frames == 1
+        assert valid_data == 29952
 
     run_simulation(dut, testbench_phy())
 

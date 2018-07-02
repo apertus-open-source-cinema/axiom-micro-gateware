@@ -1,5 +1,5 @@
 # AXIOM micro gateware
-![build status](https://api.travis-ci.org/axiom-micro/gateware.svg?branch=master)
+[![build status](https://api.travis-ci.org/axiom-micro/gateware.svg?branch=master)](https://travis-ci.org/axiom-micro/gateware)
 gateware for the main fpga, including a hispi decoder and image processing.
 
 The FPGA design is build using [migen](https://github.com/m-labs/migen)
@@ -11,6 +11,15 @@ a different protocol (HiSPI) than the beta.
 
 
 ## Hack it
-Simply clone this repository and install the dependencies by running
-`pip install -r requirements.txt`. Then you can run the tests with
+Simply clone this repository, create a virtualenv and install the dependencies by running:
+```
+git clone https://github.com/axiom-micro/gateware
+cd gateware
+virtualenv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+
+```
+
+Then you can run the tests with
 `make test` or compile the verilog with `make verilog`.

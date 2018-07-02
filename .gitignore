@@ -1,5 +1,5 @@
-verilog/*
 test_data/test_shifted.txt
 .idea/*
+.venv
 .pytest_cache/
 __pycache__/

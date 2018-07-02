@@ -2,7 +2,13 @@ from migen import *
 
 
 class AddrGen(Module):
+    """ Generate adresses for a multi buffer memory writer with 1 cycle latency """
     def __init__(self, base_addrs=[0x0f800000 + i * 0x400000 for i in range(4)], addr_bits=32, inc=4):
+        """
+        :param base_addrs: a list containing the base addresses of the buffers
+        :param addr_bits: the number of bits of the memory addresses. Normally 32 or 64
+        :param inc: The amount of bits, the address should be incremented. This should normally be equal to your word width.
+        """
         num_addr = len(base_addrs)
         base_addrs_array=Array(Signal(addr_bits, reset=addr) for addr in base_addrs)
 

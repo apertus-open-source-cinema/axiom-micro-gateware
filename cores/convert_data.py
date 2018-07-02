@@ -2,7 +2,13 @@ from migen import *
 
 
 class ConvertData(Module):
+    """ Convert the SERDES output (6 bit striped) to a 4x12bit format"""
     def __init__(self, in_bits=6, hispi_bits=12, num_lanes=4):
+        """
+        :param in_bits: the deserialization factor of the connected SERDES
+        :param hispi_bits: the number of the HiSpi bits. Normally 12 or 8
+        :param num_lanes: the number of HiSpi Lanes. Normally 1, 2 or 4
+        """
         assert (hispi_bits / in_bits == 2)
 
         self.in_data = Signal(in_bits * num_lanes)
@@ -36,6 +42,6 @@ def test_convert_data():
         yield
         yield
 
-        assert (yield device.output) == 0b000000111111_111111000000_000000111111_111111000000
+        assert (yield device.output) == 0b111111000000_000000111111_111111000000_000000111111
 
     run_simulation(device, testbench())
