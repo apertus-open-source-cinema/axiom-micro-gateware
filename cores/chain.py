@@ -13,10 +13,9 @@ class Chain(Module):
         self.out_data = self.decoder.out
 
         # Use converter clk_out to tell us when data is ready to be moved out
-        cd = ClockDomain(reset_less = True, name="hispi")
-        cd.clk = self.converter.clk_out
-        self.clock_domains += cd
+        self.clock_domains.cd_hispi = ClockDomain(reset_less=True)
 
+        self.comb += self.cd_hispi.clk.eq(self.converter.clk_out)
         self.sync.hispi += [self.decoder.in_data.eq(self.converter.output)]
 
 
