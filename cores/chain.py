@@ -25,7 +25,7 @@ def test_clock_division():
     def testbench():
         f = open("test_data/test_convert.txt")
         i = 0
-        frame_start = False
+        previous_data = 0
 
         for line in f:
             i += 1
@@ -33,9 +33,13 @@ def test_clock_division():
                 return
 
             yield dut.in_data.eq(int(line.strip(), 2))
+            
+            # new data is moved in every second clock cycle
             if i % 2 == 0:
                 word = (yield dut.converter.output)
                 assert (yield dut.decoder.in_data) == word
+            else:
+                assert (yield dut.decoder.in_data) == previous_data
 
 
     dut = Chain()
