@@ -21,7 +21,6 @@ class Chain(Module):
 
 
 def test_clock_division():
-    word = 0
     def testbench():
         f = open("test_data/test_convert.txt")
         i = 0
@@ -41,6 +40,32 @@ def test_clock_division():
             else:
                 assert (yield dut.decoder.in_data) == previous_data
 
+
+    dut = Chain()
+    run_simulation(dut, testbench())
+
+
+def test_decoding():
+    def testbench():
+        f = open("test_data/test_convert.txt")
+        i = 0
+
+        valid = False
+        frame_start = False
+
+        for line in f:
+            i += 1
+            if i > 10000:
+                return
+
+            yield dut.in_data.eq(int(line.strip(), 2))
+
+            if (yield dut.decoder.data_valid) == 1:
+                valid = True
+            if (yield dut.decoder.frame_start) == 1:
+                frame_start = True
+
+        assert valid == true and frame_start == True
 
     dut = Chain()
     run_simulation(dut, testbench())
