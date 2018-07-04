@@ -31,7 +31,8 @@ def test_clock_division():
                 return
 
             yield dut.in_data.eq(int(line.strip(), 2))
-            
+            yield
+
             # new data is moved in every second clock cycle
             if i % 2 == 0:
                 word = (yield dut.converter.output)
@@ -41,7 +42,7 @@ def test_clock_division():
 
 
     dut = Chain()
-    run_simulation(dut, testbench())
+    run_simulation(dut, testbench(), clocks = {'sys': 10, 'hispi': (20, 5)})
 
 
 def test_decoding():
