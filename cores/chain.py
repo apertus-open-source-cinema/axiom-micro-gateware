@@ -31,7 +31,7 @@ def test_clock_division():
 
         for line in f:
             i += 1
-            if i > 10:
+            if i > 1000:
                 break
 
             # import pdb; pdb.set_trace()
@@ -47,14 +47,14 @@ def test_clock_division():
             if i % 2 == 0:
                 word = (yield dut.converter.output)
                 assert (yield dut.decoder.in_data) == word
+                previous_data = word
             else:
                 pass
-                # assert (yield dut.decoder.in_data) == previous_data
+                assert (yield dut.decoder.in_data) == previous_data
 
-        assert False
 
 
     dut = Chain()
-    run_simulation(dut, testbench(), clocks = {'sys': 10, 'hispi': (20, 5)})
+    run_simulation(dut, testbench(), clocks = {'sys': 10, 'hispi': 20})
 
 
