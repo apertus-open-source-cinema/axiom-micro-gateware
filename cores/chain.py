@@ -67,13 +67,15 @@ def test_decoding():
 
         for line in f:
             i += 1
-            if i > 1000:
+            if i > 10000:
                 break
 
             yield dut.in_data.eq(int(line.strip(), 2))
+            print (format(int(line.strip(), 2), '0>24b'))
             yield
 
             print(format((yield dut.decoder.in_data), '0>48b'))
+            print("state:", (yield dut.decoder._submodules[-1][1].state))
 
             if (yield dut.decoder.data_valid) == 1 and not valid:
                 valid = True
