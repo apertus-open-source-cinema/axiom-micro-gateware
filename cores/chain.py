@@ -7,7 +7,7 @@ class Chain(Module):
     """ Move data from one part of the processing chain to the next"""
     def __init__(self):
         self.submodules.converter = ConvertData()
-        self.submodules.decoder = HispiDecoder()
+        self.submodules.decoder = ClockDomainsRenamer("hispi")(HispiDecoder())
 
         self.in_data = self.converter.in_data
         self.out_data = self.decoder.out
@@ -52,8 +52,6 @@ def test_clock_division():
                 pass
                 assert (yield dut.decoder.in_data) == previous_data
 
-
-
     dut = Chain()
     run_simulation(dut, testbench(), clocks = {'sys': 10, 'hispi': 20})
 
@@ -90,4 +88,4 @@ def test_decoding():
         assert valid == True and frame_start == True
 
     dut = Chain()
-    run_simulation(dut, testbench(), clocks = {'sys': 10, 'hispi': 20})
+    run_simulation(dut, testbench(), clocks = {'sys': 10, 'hispi': (20, 10)})
