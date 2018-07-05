@@ -59,8 +59,6 @@ def test_clock_division():
 
 
 def test_decoding():
-    return
-    import PIL
     def testbench():
         f = open("test_data/test_convert.txt")
         i = 0
@@ -71,14 +69,15 @@ def test_decoding():
 
         for line in f:
             i += 1
-            if i > 10000:
+            if i > 1000:
                 break
 
             yield dut.in_data.eq(int(line.strip(), 2))
             yield
-            print((yield dut.converter.output))
 
-            if (yield dut.decoder.data_valid) == 1:
+            print(format((yield dut.decoder.in_data), '0>48b'))
+
+            if (yield dut.decoder.data_valid) == 1 and not valid:
                 valid = True
             if (yield dut.decoder.frame_start) == 1:
                 if frame_start == True:
@@ -90,8 +89,5 @@ def test_decoding():
 
         assert valid == True and frame_start == True
 
-        img = PIL.Image.frombytes("L", (1080, 720), frame)
-        img.save("test.png")
-
     dut = Chain()
-    run_simulation(dut, testbench())
+    run_simulation(dut, testbench(), clocks = {'sys': 10, 'hispi': 20})
