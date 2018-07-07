@@ -16,11 +16,10 @@ class Chain(Module):
         # Use converter clk_out to tell us when data is ready to be moved out
         self.clock_domains.cd_hispi = ClockDomain(reset_less=True)
 
-        conv_out_hispi = Signal(num_lanes * hispi_bits)
-        self.specials += MultiReg(self.converter.output, conv_out_hispi, "hispi")
+        # Move converter output to decoder input synced on hispi clock domain
+        self.specials += MultiReg(self.converter.output, self.decoder.in_data, "hispi")
 
         self.comb += self.cd_hispi.clk.eq(self.converter.clk_out)
-        self.comb += [self.decoder.in_data.eq(conv_out_hispi)]
 
 
 def test_clock_division():
