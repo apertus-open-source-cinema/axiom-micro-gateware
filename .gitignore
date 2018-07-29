@@ -1,6 +1,9 @@
 test_data/test_shifted.txt
 test_data/test_convert.txt
+test_data/test_convert2.txt
+test_data/test_convert3.txt
 .idea/*
 .venv
+*.vcd
 .pytest_cache/
 __pycache__/

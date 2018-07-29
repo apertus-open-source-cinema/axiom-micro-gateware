@@ -25,7 +25,7 @@ class ConvertData(Module):
 
         for lane in range(num_lanes):
             for bit in range(in_bits):
-                self.sync += lane_data[lane][bit + in_bits].eq(self.in_data[num_lanes * bit + lane])
+                self.sync += lane_data[lane][bit + in_bits].eq(~self.in_data[num_lanes * bit + lane])
 
         self.sync += [lane_data[lane][0:in_bits].eq(lane_data[lane][in_bits:]) for lane in range(num_lanes)]
         self.comb += [self.output[hispi_bits * lane: hispi_bits * (lane + 1)].eq(lane_data[lane]) for lane in
@@ -36,12 +36,12 @@ def test_convert_data():
     device = ConvertData()
 
     def testbench():
-        yield device.in_data.eq(0b0101_0101_0101_0101_0101_0101)
+        yield device.indata.eq(0b010101010101010101010101)
         yield
-        yield device.in_data.eq(0b1010_1010_1010_1010_1010_1010)
+        yield device.indata.eq(0b101010101010101010101010)
         yield
         yield
 
-        assert (yield device.output) == 0b111111000000_000000111111_111111000000_000000111111
+        assert (yield device.output) == 0b111111000000000000111111111111000000000000111111
 
     run_simulation(device, testbench())

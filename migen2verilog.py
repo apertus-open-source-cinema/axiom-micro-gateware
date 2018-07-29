@@ -1,4 +1,5 @@
 from migen.fhdl.verilog import convert
+from migen.build.xilinx import common, vivado
 from sys import argv
 from os import chdir, getcwd
 from os.path import basename, dirname
@@ -24,4 +25,8 @@ if __name__ == "__main__":
 
     chdir(call_dir)
     device = core()
-    convert(device, ios=device.ios, name=module_name).write(argv[2])
+
+    so = dict(common.xilinx_special_overrides)
+    so.update(common.xilinx_s7_special_overrides)
+    
+    convert(device, ios=device.ios, name=module_name, special_overrides=so, attr_translate=vivado.XilinxVivadoToolchain.attr_translate).write(argv[2])
