@@ -5,13 +5,16 @@ from tqdm import tqdm
 
 from operator import inv
 
+# TODO(robin): implement migen support for indexed part select
+#              (data[offset +: width] where offset can be a Signal)
+
 def hispi_filter_passthrough(config, pixel_data):
     return pixel_data >> (config.hispi_bits - config.output_bits)
 
 default_config = { 
                     "hispi_bits": 12,
                     "input_bits": 6,
-                    "buffersize": 10,
+                    "buffersize": 5,
                     "output_bits": 12,
                     "num_lanes": 4,
                     "lane_inversion_map": [inv, inv, inv, inv],
@@ -75,7 +78,11 @@ class Buffer(Module):
 #            self.sync += self[word_count - 1].eq(data_in)
 
     def slice(self, start, length):
-        return (self.data >> start)[:length]
+        if type(start) is int:
+            return self.data[start:start + length]
+        else: 
+            return self.data.part(start, length)
+#            return (self.data >> start)[:length]
 
     def __getitem__(self, key):
         return self.data[self.word_size * key:self.word_size * (key + 1)]
@@ -93,8 +100,8 @@ class HispiBuffer(HispiBase):
         self.submodules += buf
         self.buf = buf
 
-        self.word_offset = Signal(bits_for(self.config.buffersize - 1))
-        self.bit_offset = Signal(bits_for(self.config.hispi_bits - 1))
+        self.word_offset = Signal(bits_for(self.config.buffersize * self.config.hispi_bits))
+        self.bit_offset = Signal(bits_for(self.config.hispi_bits * self.config.buffersize))
         self.aligned = Signal(reset = False)
     
     def get_words(self, count, bit_offset=None, word_offset=0):
@@ -137,7 +144,7 @@ class HispiLane(HispiBase):
 @hispi_module 
 class HispiLaneWordAligner(HispiBase):
     def __init__(self, lane0, lane):
-        middle = self.config.buffersize // 2
+        middle = self.config.buffersize // 2 - 1
         sync_code = hispi_sync_code(self.config)
 
         is_sync_code = lambda l, offset = 0: l.get_words(count = 3, word_offset = offset) == sync_code
@@ -158,7 +165,7 @@ class HispiWordAligner(HispiBase):
         #              one possibility is starting a buffer, when a lane is aligned and growing the buffer until all lanes are aligned, then leaving the buffersize constant and taking the first word of each buffer makes all lanes aligned
         # buf not sure, if that is better, probably not (similar complexity)
 
-        middle = self.config.buffersize // 2
+        middle = self.config.buffersize // 2 - 1
 
         self.sync += bufs[0].word_offset.eq(middle)
         self.sync += bufs[0].aligned.eq(True)
@@ -258,8 +265,6 @@ class HispiDecoder(HispiBase):
                 handle_sync_code_coming())
 
 
-
-
 @hispi_module
 class HispiRx(HispiBase):
     def __init__(self):
@@ -268,11 +273,11 @@ class HispiRx(HispiBase):
 
         self.data_in = converter.data_in
         
-        cdc = [Signal(self.config.hispi_bits) for _ in range(self.config.num_lanes)]
+        self.cdc = [Signal(self.config.hispi_bits) for _ in range(self.config.num_lanes)]
 
-        self.specials += [MultiReg(converter.data_out[i], cdc[i], "hispi") for i in range(self.config.num_lanes)]
+        self.specials += [MultiReg(converter.data_out[i], self.cdc[i], "hispi") for i in range(self.config.num_lanes)]
 
-        bufs = [ClockDomainsRenamer("hispi")(HispiBuffer(config = self.config, data_in = cdc[i])) for i in range(self.config.num_lanes)]
+        bufs = [ClockDomainsRenamer("hispi")(HispiBuffer(config = self.config, data_in = self.cdc[i])) for i in range(self.config.num_lanes)]
         self.submodules += bufs
 
         self.submodules += [ClockDomainsRenamer("hispi")(HispiLane(config = self.config, buf = bufs[i])) for i in range(self.config.num_lanes)]
@@ -284,11 +289,15 @@ class HispiRx(HispiBase):
 
         self.data_out = Signal(self.config.output_bits * self.config.num_lanes)
         self.converter_out = Signal(self.config.hispi_bits * self.config.num_lanes)
+        self.align_out = Signal(self.config.hispi_bits * self.config.num_lanes)
+
+        self.comb += self.align_out.eq(Cat(*[bufs[i].get_aligned_words(count = 1) for i in range(self.config.num_lanes)]))
 
         self.comb += self.data_out.eq(Cat(*decoder.data_out))
-        self.comb += self.converter_out.eq(Cat(*cdc))
+        self.comb += self.converter_out.eq(Cat(*self.cdc))
 
-        self.ios = set({self.data_in}) | set({decoder.data_valid, decoder.frame_start, self.data_out, self.converter_out})
+        self.ios = set({self.data_in}) | set({decoder.data_valid, decoder.frame_start, self.data_out, self.converter_out, self.align_out})
+
 
 passthrough = lambda x: x
 
@@ -315,6 +324,64 @@ def test_hispi_rx():
 
 #            print(format((yield dut.decoder.in_data), '0>48b'))
 #            print("state:", (yield dut.decoder._submodules[-1][1].state))
+
+             
+            if valid:
+                pixel_count += 1
+
+            if (yield dut.decoder.data_valid) == 1 and not valid:
+                pixel_count += 1
+                valid = True
+
+            if (yield dut.decoder.data_valid) == 0 and valid:
+                print(pixel_count)
+                pixel_count = 0
+                valid = False
+
+            if (yield dut.decoder.frame_start) == 1 and frame_start and not skip:
+                print(frame)
+                break
+
+            if (yield dut.decoder.frame_start) == 1 and skip:
+                skip = False
+
+            if (yield dut.decoder.frame_start) == 1:
+                skip = True
+                frame_start = True
+
+#            if frame_start and valid:
+#                frame += (yield dut.data_out).to_bytes(6, 'big')
+
+            yield
+
+
+
+    run_simulation(dut, testbench(), clocks = {'sys': 10, 'hispi': (20, 10)}, vcd_name="hispi_rx.vcd")
+
+def test_decoder():
+    dut = HispiRx(config = hispi_config())
+
+    def testbench():
+        f = open("test_data/test_convert5.txt")
+        i = 0
+
+        valid = False
+        frame_start = False
+        frame = b""
+        pixel_count = 0
+        skip = False
+
+        for line in tqdm(f):
+            i += 1
+#            if i > 100000:
+#                break
+
+#            print (format(int(line.strip(), 2), '0>24b'))
+
+#            print(format((yield dut.decoder.in_data), '0>48b'))
+#            print("state:", (yield dut.decoder._submodules[-1][1].state))
+
+            yield dut.data_in.eq(int(line.strip().split(' ')[0], 2))
 
              
             if valid:

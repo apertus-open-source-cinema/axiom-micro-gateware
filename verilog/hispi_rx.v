@@ -5,6 +5,7 @@ module hispi_rx(
 	output reg data_valid,
 	output [47:0] data_out,
 	output [47:0] converter_out,
+	output [47:0] align_out,
 	input hispi_clk,
 	input hispi_rst,
 	input sys_clk,
@@ -19,21 +20,21 @@ wire [11:0] hispimodule0;
 wire [11:0] hispimodule1;
 wire [11:0] hispimodule2;
 wire [11:0] hispimodule3;
-reg [119:0] hispimodule0_data = 120'd1329227995784915872903807060280344575;
-reg [3:0] hispimodule0_word_offset = 4'd0;
-reg [3:0] hispimodule0_bit_offset = 4'd0;
+reg [59:0] hispimodule0_data = 60'd1152921504606846975;
+reg [5:0] hispimodule0_word_offset = 6'd0;
+reg [5:0] hispimodule0_bit_offset = 6'd0;
 reg hispimodule0_aligned = 1'd0;
-reg [119:0] hispimodule1_data = 120'd1329227995784915872903807060280344575;
-reg [3:0] hispimodule1_word_offset = 4'd0;
-reg [3:0] hispimodule1_bit_offset = 4'd0;
+reg [59:0] hispimodule1_data = 60'd1152921504606846975;
+reg [5:0] hispimodule1_word_offset = 6'd0;
+reg [5:0] hispimodule1_bit_offset = 6'd0;
 reg hispimodule1_aligned = 1'd0;
-reg [119:0] hispimodule2_data = 120'd1329227995784915872903807060280344575;
-reg [3:0] hispimodule2_word_offset = 4'd0;
-reg [3:0] hispimodule2_bit_offset = 4'd0;
+reg [59:0] hispimodule2_data = 60'd1152921504606846975;
+reg [5:0] hispimodule2_word_offset = 6'd0;
+reg [5:0] hispimodule2_bit_offset = 6'd0;
 reg hispimodule2_aligned = 1'd0;
-reg [119:0] hispimodule3_data = 120'd1329227995784915872903807060280344575;
-reg [3:0] hispimodule3_word_offset = 4'd0;
-reg [3:0] hispimodule3_bit_offset = 4'd0;
+reg [59:0] hispimodule3_data = 60'd1152921504606846975;
+reg [5:0] hispimodule3_word_offset = 6'd0;
+reg [5:0] hispimodule3_bit_offset = 6'd0;
 reg hispimodule3_aligned = 1'd0;
 reg [11:0] hispimodule10;
 reg [11:0] hispimodule11;
@@ -64,96 +65,6 @@ reg [1:0] next_value6;
 reg next_value_ce6;
 reg [1:0] next_value7;
 reg next_value_ce7;
-wire [119:0] comb_complexslicelowerer_slice_proxy0;
-wire [119:0] comb_slice_proxy;
-wire [119:0] comb_complexslicelowerer_slice_proxy1;
-wire [119:0] comb_complexslicelowerer_slice_proxy2;
-wire [119:0] comb_complexslicelowerer_slice_proxy3;
-wire [119:0] comb_complexslicelowerer_slice_proxy4;
-wire [119:0] comb_complexslicelowerer_slice_proxy5;
-wire [119:0] comb_complexslicelowerer_slice_proxy6;
-wire [119:0] comb_complexslicelowerer_slice_proxy7;
-wire [119:0] comb_complexslicelowerer_slice_proxy8;
-wire [119:0] comb_rhs_slice_proxy0;
-wire [119:0] comb_rhs_slice_proxy1;
-wire [119:0] comb_rhs_slice_proxy2;
-wire [119:0] comb_rhs_slice_proxy3;
-wire [119:0] comb_complexslicelowerer_slice_proxy9;
-wire [119:0] sync_complexslicelowerer_slice_proxy0;
-wire [119:0] sync_complexslicelowerer_slice_proxy1;
-wire [119:0] sync_complexslicelowerer_slice_proxy2;
-wire [119:0] sync_complexslicelowerer_slice_proxy3;
-wire [119:0] sync_complexslicelowerer_slice_proxy4;
-wire [119:0] sync_complexslicelowerer_slice_proxy5;
-wire [119:0] sync_complexslicelowerer_slice_proxy6;
-wire [119:0] sync_complexslicelowerer_slice_proxy7;
-wire [119:0] sync_complexslicelowerer_slice_proxy8;
-wire [119:0] sync_complexslicelowerer_slice_proxy9;
-wire [119:0] sync_complexslicelowerer_slice_proxy10;
-wire [119:0] sync_complexslicelowerer_slice_proxy11;
-wire [119:0] sync_complexslicelowerer_slice_proxy12;
-wire [119:0] sync_complexslicelowerer_slice_proxy13;
-wire [119:0] sync_complexslicelowerer_slice_proxy14;
-wire [119:0] sync_complexslicelowerer_slice_proxy15;
-wire [119:0] sync_complexslicelowerer_slice_proxy16;
-wire [119:0] sync_complexslicelowerer_slice_proxy17;
-wire [119:0] sync_complexslicelowerer_slice_proxy18;
-wire [119:0] sync_complexslicelowerer_slice_proxy19;
-wire [119:0] sync_complexslicelowerer_slice_proxy20;
-wire [119:0] sync_complexslicelowerer_slice_proxy21;
-wire [119:0] sync_complexslicelowerer_slice_proxy22;
-wire [119:0] sync_complexslicelowerer_slice_proxy23;
-wire [119:0] sync_complexslicelowerer_slice_proxy24;
-wire [119:0] sync_complexslicelowerer_slice_proxy25;
-wire [119:0] sync_complexslicelowerer_slice_proxy26;
-wire [119:0] sync_complexslicelowerer_slice_proxy27;
-wire [119:0] sync_complexslicelowerer_slice_proxy28;
-wire [119:0] sync_complexslicelowerer_slice_proxy29;
-wire [119:0] sync_complexslicelowerer_slice_proxy30;
-wire [119:0] sync_complexslicelowerer_slice_proxy31;
-wire [119:0] sync_complexslicelowerer_slice_proxy32;
-wire [119:0] sync_complexslicelowerer_slice_proxy33;
-wire [119:0] sync_complexslicelowerer_slice_proxy34;
-wire [119:0] sync_complexslicelowerer_slice_proxy35;
-wire [119:0] sync_complexslicelowerer_slice_proxy36;
-wire [119:0] sync_complexslicelowerer_slice_proxy37;
-wire [119:0] sync_complexslicelowerer_slice_proxy38;
-wire [119:0] sync_complexslicelowerer_slice_proxy39;
-wire [119:0] sync_complexslicelowerer_slice_proxy40;
-wire [119:0] sync_complexslicelowerer_slice_proxy41;
-wire [119:0] sync_complexslicelowerer_slice_proxy42;
-wire [119:0] sync_complexslicelowerer_slice_proxy43;
-wire [119:0] sync_complexslicelowerer_slice_proxy44;
-wire [119:0] sync_complexslicelowerer_slice_proxy45;
-wire [119:0] sync_complexslicelowerer_slice_proxy46;
-wire [119:0] sync_complexslicelowerer_slice_proxy47;
-wire [119:0] sync_complexslicelowerer_slice_proxy48;
-wire [119:0] sync_t_slice_proxy0;
-wire [119:0] sync_t_slice_proxy1;
-wire [119:0] sync_t_slice_proxy2;
-wire [119:0] sync_t_slice_proxy3;
-wire [119:0] sync_t_slice_proxy4;
-wire [119:0] sync_t_slice_proxy5;
-wire [119:0] sync_t_slice_proxy6;
-wire [119:0] sync_t_slice_proxy7;
-wire [119:0] sync_complexslicelowerer_slice_proxy49;
-wire [119:0] sync_t_slice_proxy8;
-wire [119:0] sync_t_slice_proxy9;
-wire [119:0] sync_t_slice_proxy10;
-wire [119:0] sync_t_slice_proxy11;
-wire [119:0] sync_t_slice_proxy12;
-wire [119:0] sync_t_slice_proxy13;
-wire [119:0] sync_t_slice_proxy14;
-wire [119:0] sync_t_slice_proxy15;
-wire [119:0] sync_complexslicelowerer_slice_proxy50;
-wire [119:0] sync_t_slice_proxy16;
-wire [119:0] sync_t_slice_proxy17;
-wire [119:0] sync_t_slice_proxy18;
-wire [119:0] sync_t_slice_proxy19;
-wire [119:0] sync_t_slice_proxy20;
-wire [119:0] sync_t_slice_proxy21;
-wire [119:0] sync_t_slice_proxy22;
-wire [119:0] sync_t_slice_proxy23;
 (* async_reg = "true", mr_ff = "true", dont_touch = "true" *) reg [11:0] xilinxmultiregimpl0_regs0 = 12'd0;
 (* async_reg = "true", dont_touch = "true" *) reg [11:0] xilinxmultiregimpl0_regs1 = 12'd0;
 (* async_reg = "true", mr_ff = "true", dont_touch = "true" *) reg [11:0] xilinxmultiregimpl1_regs0 = 12'd0;
@@ -171,6 +82,7 @@ reg dummy_s;
 initial dummy_s <= 1'd0;
 // synthesis translate_on
 
+assign align_out = {hispimodule3_data[(hispimodule3_bit_offset + (4'd12 * (hispimodule3_word_offset + 1'd0)))+:12], hispimodule2_data[(hispimodule2_bit_offset + (4'd12 * (hispimodule2_word_offset + 1'd0)))+:12], hispimodule1_data[(hispimodule1_bit_offset + (4'd12 * (hispimodule1_word_offset + 1'd0)))+:12], hispimodule0_data[(hispimodule0_bit_offset + (4'd12 * (hispimodule0_word_offset + 1'd0)))+:12]};
 assign data_out = {hispimodule13, hispimodule12, hispimodule11, hispimodule10};
 assign converter_out = {hispimodule3, hispimodule2, hispimodule1, hispimodule0};
 
@@ -206,7 +118,7 @@ always @(*) begin
 	next_state <= state;
 	case (state)
 		1'd1: begin
-			if ((comb_complexslicelowerer_slice_proxy0[35:0] == 12'd4095)) begin
+			if ((hispimodule0_data[(hispimodule0_bit_offset + (4'd12 * (hispimodule0_word_offset + 1'd1)))+:36] == 12'd4095)) begin
 				next_state <= 2'd2;
 			end
 		end
@@ -220,7 +132,7 @@ always @(*) begin
 			next_state <= 3'd5;
 		end
 		3'd5: begin
-			case (comb_slice_proxy[11:0])
+			case (hispimodule0_data[(hispimodule0_bit_offset + (4'd12 * (hispimodule0_word_offset + 1'd0)))+:12])
 				1'd1: begin
 					next_state <= 4'd8;
 				end
@@ -252,24 +164,24 @@ always @(*) begin
 			endcase
 		end
 		3'd6: begin
-			next_value0 <= comb_complexslicelowerer_slice_proxy1[11:0];
+			next_value0 <= hispimodule0_data[(hispimodule0_bit_offset + (4'd12 * (hispimodule0_word_offset + 1'd0)))+:12];
 			next_value_ce0 <= 1'd1;
-			next_value1 <= comb_complexslicelowerer_slice_proxy2[11:0];
+			next_value1 <= hispimodule1_data[(hispimodule1_bit_offset + (4'd12 * (hispimodule1_word_offset + 1'd0)))+:12];
 			next_value_ce1 <= 1'd1;
-			next_value2 <= comb_complexslicelowerer_slice_proxy3[11:0];
+			next_value2 <= hispimodule2_data[(hispimodule2_bit_offset + (4'd12 * (hispimodule2_word_offset + 1'd0)))+:12];
 			next_value_ce2 <= 1'd1;
-			next_value3 <= comb_complexslicelowerer_slice_proxy4[11:0];
+			next_value3 <= hispimodule3_data[(hispimodule3_bit_offset + (4'd12 * (hispimodule3_word_offset + 1'd0)))+:12];
 			next_value_ce3 <= 1'd1;
 			next_state <= 3'd7;
 		end
 		3'd7: begin
-			next_value4 <= comb_complexslicelowerer_slice_proxy5[11:0];
+			next_value4 <= hispimodule0_data[(hispimodule0_bit_offset + (4'd12 * (hispimodule0_word_offset + 1'd0)))+:12];
 			next_value_ce4 <= 1'd1;
-			next_value5 <= comb_complexslicelowerer_slice_proxy6[11:0];
+			next_value5 <= hispimodule1_data[(hispimodule1_bit_offset + (4'd12 * (hispimodule1_word_offset + 1'd0)))+:12];
 			next_value_ce5 <= 1'd1;
-			next_value6 <= comb_complexslicelowerer_slice_proxy7[11:0];
+			next_value6 <= hispimodule2_data[(hispimodule2_bit_offset + (4'd12 * (hispimodule2_word_offset + 1'd0)))+:12];
 			next_value_ce6 <= 1'd1;
-			next_value7 <= comb_complexslicelowerer_slice_proxy8[11:0];
+			next_value7 <= hispimodule3_data[(hispimodule3_bit_offset + (4'd12 * (hispimodule3_word_offset + 1'd0)))+:12];
 			next_value_ce7 <= 1'd1;
 			next_state <= 1'd1;
 		end
@@ -278,11 +190,11 @@ always @(*) begin
 			frame_start <= found_frame_start;
 			found_frame_start_next_value <= 1'd0;
 			found_frame_start_next_value_ce <= 1'd1;
-			hispimodule10 <= (comb_rhs_slice_proxy0[11:0] >>> 1'd0);
-			hispimodule11 <= (comb_rhs_slice_proxy1[11:0] >>> 1'd0);
-			hispimodule12 <= (comb_rhs_slice_proxy2[11:0] >>> 1'd0);
-			hispimodule13 <= (comb_rhs_slice_proxy3[11:0] >>> 1'd0);
-			if ((comb_complexslicelowerer_slice_proxy9[35:0] == 12'd4095)) begin
+			hispimodule10 <= (hispimodule0_data[(hispimodule0_bit_offset + (4'd12 * (hispimodule0_word_offset + 1'd0)))+:12] >>> 1'd0);
+			hispimodule11 <= (hispimodule1_data[(hispimodule1_bit_offset + (4'd12 * (hispimodule1_word_offset + 1'd0)))+:12] >>> 1'd0);
+			hispimodule12 <= (hispimodule2_data[(hispimodule2_bit_offset + (4'd12 * (hispimodule2_word_offset + 1'd0)))+:12] >>> 1'd0);
+			hispimodule13 <= (hispimodule3_data[(hispimodule3_bit_offset + (4'd12 * (hispimodule3_word_offset + 1'd0)))+:12] >>> 1'd0);
+			if ((hispimodule0_data[(hispimodule0_bit_offset + (4'd12 * (hispimodule0_word_offset + 1'd1)))+:36] == 12'd4095)) begin
 				next_state <= 2'd2;
 			end
 		end
@@ -296,355 +208,205 @@ always @(*) begin
 	dummy_d <= dummy_s;
 // synthesis translate_on
 end
-assign comb_complexslicelowerer_slice_proxy0 = (hispimodule0_data >>> (hispimodule0_bit_offset + (4'd12 * (hispimodule0_word_offset + 1'd1))));
-assign comb_slice_proxy = (hispimodule0_data >>> (hispimodule0_bit_offset + (4'd12 * (hispimodule0_word_offset + 1'd0))));
-assign comb_complexslicelowerer_slice_proxy1 = (hispimodule0_data >>> (hispimodule0_bit_offset + (4'd12 * (hispimodule0_word_offset + 1'd0))));
-assign comb_complexslicelowerer_slice_proxy2 = (hispimodule1_data >>> (hispimodule1_bit_offset + (4'd12 * (hispimodule1_word_offset + 1'd0))));
-assign comb_complexslicelowerer_slice_proxy3 = (hispimodule2_data >>> (hispimodule2_bit_offset + (4'd12 * (hispimodule2_word_offset + 1'd0))));
-assign comb_complexslicelowerer_slice_proxy4 = (hispimodule3_data >>> (hispimodule3_bit_offset + (4'd12 * (hispimodule3_word_offset + 1'd0))));
-assign comb_complexslicelowerer_slice_proxy5 = (hispimodule0_data >>> (hispimodule0_bit_offset + (4'd12 * (hispimodule0_word_offset + 1'd0))));
-assign comb_complexslicelowerer_slice_proxy6 = (hispimodule1_data >>> (hispimodule1_bit_offset + (4'd12 * (hispimodule1_word_offset + 1'd0))));
-assign comb_complexslicelowerer_slice_proxy7 = (hispimodule2_data >>> (hispimodule2_bit_offset + (4'd12 * (hispimodule2_word_offset + 1'd0))));
-assign comb_complexslicelowerer_slice_proxy8 = (hispimodule3_data >>> (hispimodule3_bit_offset + (4'd12 * (hispimodule3_word_offset + 1'd0))));
-assign comb_rhs_slice_proxy0 = (hispimodule0_data >>> (hispimodule0_bit_offset + (4'd12 * (hispimodule0_word_offset + 1'd0))));
-assign comb_rhs_slice_proxy1 = (hispimodule1_data >>> (hispimodule1_bit_offset + (4'd12 * (hispimodule1_word_offset + 1'd0))));
-assign comb_rhs_slice_proxy2 = (hispimodule2_data >>> (hispimodule2_bit_offset + (4'd12 * (hispimodule2_word_offset + 1'd0))));
-assign comb_rhs_slice_proxy3 = (hispimodule3_data >>> (hispimodule3_bit_offset + (4'd12 * (hispimodule3_word_offset + 1'd0))));
-assign comb_complexslicelowerer_slice_proxy9 = (hispimodule0_data >>> (hispimodule0_bit_offset + (4'd12 * (hispimodule0_word_offset + 1'd1))));
-assign sync_complexslicelowerer_slice_proxy0 = (hispimodule0_data >>> 1'd0);
-assign sync_complexslicelowerer_slice_proxy1 = (hispimodule0_data >>> 1'd1);
-assign sync_complexslicelowerer_slice_proxy2 = (hispimodule0_data >>> 2'd2);
-assign sync_complexslicelowerer_slice_proxy3 = (hispimodule0_data >>> 2'd3);
-assign sync_complexslicelowerer_slice_proxy4 = (hispimodule0_data >>> 3'd4);
-assign sync_complexslicelowerer_slice_proxy5 = (hispimodule0_data >>> 3'd5);
-assign sync_complexslicelowerer_slice_proxy6 = (hispimodule0_data >>> 3'd6);
-assign sync_complexslicelowerer_slice_proxy7 = (hispimodule0_data >>> 3'd7);
-assign sync_complexslicelowerer_slice_proxy8 = (hispimodule0_data >>> 4'd8);
-assign sync_complexslicelowerer_slice_proxy9 = (hispimodule0_data >>> 4'd9);
-assign sync_complexslicelowerer_slice_proxy10 = (hispimodule0_data >>> 4'd10);
-assign sync_complexslicelowerer_slice_proxy11 = (hispimodule0_data >>> 4'd11);
-assign sync_complexslicelowerer_slice_proxy12 = (hispimodule1_data >>> 1'd0);
-assign sync_complexslicelowerer_slice_proxy13 = (hispimodule1_data >>> 1'd1);
-assign sync_complexslicelowerer_slice_proxy14 = (hispimodule1_data >>> 2'd2);
-assign sync_complexslicelowerer_slice_proxy15 = (hispimodule1_data >>> 2'd3);
-assign sync_complexslicelowerer_slice_proxy16 = (hispimodule1_data >>> 3'd4);
-assign sync_complexslicelowerer_slice_proxy17 = (hispimodule1_data >>> 3'd5);
-assign sync_complexslicelowerer_slice_proxy18 = (hispimodule1_data >>> 3'd6);
-assign sync_complexslicelowerer_slice_proxy19 = (hispimodule1_data >>> 3'd7);
-assign sync_complexslicelowerer_slice_proxy20 = (hispimodule1_data >>> 4'd8);
-assign sync_complexslicelowerer_slice_proxy21 = (hispimodule1_data >>> 4'd9);
-assign sync_complexslicelowerer_slice_proxy22 = (hispimodule1_data >>> 4'd10);
-assign sync_complexslicelowerer_slice_proxy23 = (hispimodule1_data >>> 4'd11);
-assign sync_complexslicelowerer_slice_proxy24 = (hispimodule2_data >>> 1'd0);
-assign sync_complexslicelowerer_slice_proxy25 = (hispimodule2_data >>> 1'd1);
-assign sync_complexslicelowerer_slice_proxy26 = (hispimodule2_data >>> 2'd2);
-assign sync_complexslicelowerer_slice_proxy27 = (hispimodule2_data >>> 2'd3);
-assign sync_complexslicelowerer_slice_proxy28 = (hispimodule2_data >>> 3'd4);
-assign sync_complexslicelowerer_slice_proxy29 = (hispimodule2_data >>> 3'd5);
-assign sync_complexslicelowerer_slice_proxy30 = (hispimodule2_data >>> 3'd6);
-assign sync_complexslicelowerer_slice_proxy31 = (hispimodule2_data >>> 3'd7);
-assign sync_complexslicelowerer_slice_proxy32 = (hispimodule2_data >>> 4'd8);
-assign sync_complexslicelowerer_slice_proxy33 = (hispimodule2_data >>> 4'd9);
-assign sync_complexslicelowerer_slice_proxy34 = (hispimodule2_data >>> 4'd10);
-assign sync_complexslicelowerer_slice_proxy35 = (hispimodule2_data >>> 4'd11);
-assign sync_complexslicelowerer_slice_proxy36 = (hispimodule3_data >>> 1'd0);
-assign sync_complexslicelowerer_slice_proxy37 = (hispimodule3_data >>> 1'd1);
-assign sync_complexslicelowerer_slice_proxy38 = (hispimodule3_data >>> 2'd2);
-assign sync_complexslicelowerer_slice_proxy39 = (hispimodule3_data >>> 2'd3);
-assign sync_complexslicelowerer_slice_proxy40 = (hispimodule3_data >>> 3'd4);
-assign sync_complexslicelowerer_slice_proxy41 = (hispimodule3_data >>> 3'd5);
-assign sync_complexslicelowerer_slice_proxy42 = (hispimodule3_data >>> 3'd6);
-assign sync_complexslicelowerer_slice_proxy43 = (hispimodule3_data >>> 3'd7);
-assign sync_complexslicelowerer_slice_proxy44 = (hispimodule3_data >>> 4'd8);
-assign sync_complexslicelowerer_slice_proxy45 = (hispimodule3_data >>> 4'd9);
-assign sync_complexslicelowerer_slice_proxy46 = (hispimodule3_data >>> 4'd10);
-assign sync_complexslicelowerer_slice_proxy47 = (hispimodule3_data >>> 4'd11);
-assign sync_complexslicelowerer_slice_proxy48 = (hispimodule0_data >>> (hispimodule0_bit_offset + 6'd60));
-assign sync_t_slice_proxy0 = (hispimodule1_data >>> (hispimodule1_bit_offset + 1'd0));
-assign sync_t_slice_proxy1 = (hispimodule1_data >>> (hispimodule1_bit_offset + 4'd12));
-assign sync_t_slice_proxy2 = (hispimodule1_data >>> (hispimodule1_bit_offset + 5'd24));
-assign sync_t_slice_proxy3 = (hispimodule1_data >>> (hispimodule1_bit_offset + 6'd36));
-assign sync_t_slice_proxy4 = (hispimodule1_data >>> (hispimodule1_bit_offset + 6'd48));
-assign sync_t_slice_proxy5 = (hispimodule1_data >>> (hispimodule1_bit_offset + 6'd60));
-assign sync_t_slice_proxy6 = (hispimodule1_data >>> (hispimodule1_bit_offset + 7'd72));
-assign sync_t_slice_proxy7 = (hispimodule1_data >>> (hispimodule1_bit_offset + 7'd84));
-assign sync_complexslicelowerer_slice_proxy49 = (hispimodule0_data >>> (hispimodule0_bit_offset + 6'd60));
-assign sync_t_slice_proxy8 = (hispimodule2_data >>> (hispimodule2_bit_offset + 1'd0));
-assign sync_t_slice_proxy9 = (hispimodule2_data >>> (hispimodule2_bit_offset + 4'd12));
-assign sync_t_slice_proxy10 = (hispimodule2_data >>> (hispimodule2_bit_offset + 5'd24));
-assign sync_t_slice_proxy11 = (hispimodule2_data >>> (hispimodule2_bit_offset + 6'd36));
-assign sync_t_slice_proxy12 = (hispimodule2_data >>> (hispimodule2_bit_offset + 6'd48));
-assign sync_t_slice_proxy13 = (hispimodule2_data >>> (hispimodule2_bit_offset + 6'd60));
-assign sync_t_slice_proxy14 = (hispimodule2_data >>> (hispimodule2_bit_offset + 7'd72));
-assign sync_t_slice_proxy15 = (hispimodule2_data >>> (hispimodule2_bit_offset + 7'd84));
-assign sync_complexslicelowerer_slice_proxy50 = (hispimodule0_data >>> (hispimodule0_bit_offset + 6'd60));
-assign sync_t_slice_proxy16 = (hispimodule3_data >>> (hispimodule3_bit_offset + 1'd0));
-assign sync_t_slice_proxy17 = (hispimodule3_data >>> (hispimodule3_bit_offset + 4'd12));
-assign sync_t_slice_proxy18 = (hispimodule3_data >>> (hispimodule3_bit_offset + 5'd24));
-assign sync_t_slice_proxy19 = (hispimodule3_data >>> (hispimodule3_bit_offset + 6'd36));
-assign sync_t_slice_proxy20 = (hispimodule3_data >>> (hispimodule3_bit_offset + 6'd48));
-assign sync_t_slice_proxy21 = (hispimodule3_data >>> (hispimodule3_bit_offset + 6'd60));
-assign sync_t_slice_proxy22 = (hispimodule3_data >>> (hispimodule3_bit_offset + 7'd72));
-assign sync_t_slice_proxy23 = (hispimodule3_data >>> (hispimodule3_bit_offset + 7'd84));
 assign hispimodule0 = xilinxmultiregimpl0_regs1;
 assign hispimodule1 = xilinxmultiregimpl1_regs1;
 assign hispimodule2 = xilinxmultiregimpl2_regs1;
 assign hispimodule3 = xilinxmultiregimpl3_regs1;
 
 always @(posedge hispi_clk) begin
-	hispimodule0_data[107:0] <= hispimodule0_data[119:12];
-	hispimodule0_data[119:108] <= hispimodule0;
-	hispimodule1_data[107:0] <= hispimodule1_data[119:12];
-	hispimodule1_data[119:108] <= hispimodule1;
-	hispimodule2_data[107:0] <= hispimodule2_data[119:12];
-	hispimodule2_data[119:108] <= hispimodule2;
-	hispimodule3_data[107:0] <= hispimodule3_data[119:12];
-	hispimodule3_data[119:108] <= hispimodule3;
-	if ((sync_complexslicelowerer_slice_proxy0[35:0] == 12'd4095)) begin
+	hispimodule0_data[47:0] <= hispimodule0_data[59:12];
+	hispimodule0_data[59:48] <= hispimodule0;
+	hispimodule1_data[47:0] <= hispimodule1_data[59:12];
+	hispimodule1_data[59:48] <= hispimodule1;
+	hispimodule2_data[47:0] <= hispimodule2_data[59:12];
+	hispimodule2_data[59:48] <= hispimodule2;
+	hispimodule3_data[47:0] <= hispimodule3_data[59:12];
+	hispimodule3_data[59:48] <= hispimodule3;
+	if ((hispimodule0_data[35:0] == 12'd4095)) begin
 		hispimodule0_bit_offset <= 1'd0;
 	end
-	if ((sync_complexslicelowerer_slice_proxy1[35:0] == 12'd4095)) begin
+	if ((hispimodule0_data[36:1] == 12'd4095)) begin
 		hispimodule0_bit_offset <= 1'd1;
 	end
-	if ((sync_complexslicelowerer_slice_proxy2[35:0] == 12'd4095)) begin
+	if ((hispimodule0_data[37:2] == 12'd4095)) begin
 		hispimodule0_bit_offset <= 2'd2;
 	end
-	if ((sync_complexslicelowerer_slice_proxy3[35:0] == 12'd4095)) begin
+	if ((hispimodule0_data[38:3] == 12'd4095)) begin
 		hispimodule0_bit_offset <= 2'd3;
 	end
-	if ((sync_complexslicelowerer_slice_proxy4[35:0] == 12'd4095)) begin
+	if ((hispimodule0_data[39:4] == 12'd4095)) begin
 		hispimodule0_bit_offset <= 3'd4;
 	end
-	if ((sync_complexslicelowerer_slice_proxy5[35:0] == 12'd4095)) begin
+	if ((hispimodule0_data[40:5] == 12'd4095)) begin
 		hispimodule0_bit_offset <= 3'd5;
 	end
-	if ((sync_complexslicelowerer_slice_proxy6[35:0] == 12'd4095)) begin
+	if ((hispimodule0_data[41:6] == 12'd4095)) begin
 		hispimodule0_bit_offset <= 3'd6;
 	end
-	if ((sync_complexslicelowerer_slice_proxy7[35:0] == 12'd4095)) begin
+	if ((hispimodule0_data[42:7] == 12'd4095)) begin
 		hispimodule0_bit_offset <= 3'd7;
 	end
-	if ((sync_complexslicelowerer_slice_proxy8[35:0] == 12'd4095)) begin
+	if ((hispimodule0_data[43:8] == 12'd4095)) begin
 		hispimodule0_bit_offset <= 4'd8;
 	end
-	if ((sync_complexslicelowerer_slice_proxy9[35:0] == 12'd4095)) begin
+	if ((hispimodule0_data[44:9] == 12'd4095)) begin
 		hispimodule0_bit_offset <= 4'd9;
 	end
-	if ((sync_complexslicelowerer_slice_proxy10[35:0] == 12'd4095)) begin
+	if ((hispimodule0_data[45:10] == 12'd4095)) begin
 		hispimodule0_bit_offset <= 4'd10;
 	end
-	if ((sync_complexslicelowerer_slice_proxy11[35:0] == 12'd4095)) begin
+	if ((hispimodule0_data[46:11] == 12'd4095)) begin
 		hispimodule0_bit_offset <= 4'd11;
 	end
-	if ((sync_complexslicelowerer_slice_proxy12[35:0] == 12'd4095)) begin
+	if ((hispimodule1_data[35:0] == 12'd4095)) begin
 		hispimodule1_bit_offset <= 1'd0;
 	end
-	if ((sync_complexslicelowerer_slice_proxy13[35:0] == 12'd4095)) begin
+	if ((hispimodule1_data[36:1] == 12'd4095)) begin
 		hispimodule1_bit_offset <= 1'd1;
 	end
-	if ((sync_complexslicelowerer_slice_proxy14[35:0] == 12'd4095)) begin
+	if ((hispimodule1_data[37:2] == 12'd4095)) begin
 		hispimodule1_bit_offset <= 2'd2;
 	end
-	if ((sync_complexslicelowerer_slice_proxy15[35:0] == 12'd4095)) begin
+	if ((hispimodule1_data[38:3] == 12'd4095)) begin
 		hispimodule1_bit_offset <= 2'd3;
 	end
-	if ((sync_complexslicelowerer_slice_proxy16[35:0] == 12'd4095)) begin
+	if ((hispimodule1_data[39:4] == 12'd4095)) begin
 		hispimodule1_bit_offset <= 3'd4;
 	end
-	if ((sync_complexslicelowerer_slice_proxy17[35:0] == 12'd4095)) begin
+	if ((hispimodule1_data[40:5] == 12'd4095)) begin
 		hispimodule1_bit_offset <= 3'd5;
 	end
-	if ((sync_complexslicelowerer_slice_proxy18[35:0] == 12'd4095)) begin
+	if ((hispimodule1_data[41:6] == 12'd4095)) begin
 		hispimodule1_bit_offset <= 3'd6;
 	end
-	if ((sync_complexslicelowerer_slice_proxy19[35:0] == 12'd4095)) begin
+	if ((hispimodule1_data[42:7] == 12'd4095)) begin
 		hispimodule1_bit_offset <= 3'd7;
 	end
-	if ((sync_complexslicelowerer_slice_proxy20[35:0] == 12'd4095)) begin
+	if ((hispimodule1_data[43:8] == 12'd4095)) begin
 		hispimodule1_bit_offset <= 4'd8;
 	end
-	if ((sync_complexslicelowerer_slice_proxy21[35:0] == 12'd4095)) begin
+	if ((hispimodule1_data[44:9] == 12'd4095)) begin
 		hispimodule1_bit_offset <= 4'd9;
 	end
-	if ((sync_complexslicelowerer_slice_proxy22[35:0] == 12'd4095)) begin
+	if ((hispimodule1_data[45:10] == 12'd4095)) begin
 		hispimodule1_bit_offset <= 4'd10;
 	end
-	if ((sync_complexslicelowerer_slice_proxy23[35:0] == 12'd4095)) begin
+	if ((hispimodule1_data[46:11] == 12'd4095)) begin
 		hispimodule1_bit_offset <= 4'd11;
 	end
-	if ((sync_complexslicelowerer_slice_proxy24[35:0] == 12'd4095)) begin
+	if ((hispimodule2_data[35:0] == 12'd4095)) begin
 		hispimodule2_bit_offset <= 1'd0;
 	end
-	if ((sync_complexslicelowerer_slice_proxy25[35:0] == 12'd4095)) begin
+	if ((hispimodule2_data[36:1] == 12'd4095)) begin
 		hispimodule2_bit_offset <= 1'd1;
 	end
-	if ((sync_complexslicelowerer_slice_proxy26[35:0] == 12'd4095)) begin
+	if ((hispimodule2_data[37:2] == 12'd4095)) begin
 		hispimodule2_bit_offset <= 2'd2;
 	end
-	if ((sync_complexslicelowerer_slice_proxy27[35:0] == 12'd4095)) begin
+	if ((hispimodule2_data[38:3] == 12'd4095)) begin
 		hispimodule2_bit_offset <= 2'd3;
 	end
-	if ((sync_complexslicelowerer_slice_proxy28[35:0] == 12'd4095)) begin
+	if ((hispimodule2_data[39:4] == 12'd4095)) begin
 		hispimodule2_bit_offset <= 3'd4;
 	end
-	if ((sync_complexslicelowerer_slice_proxy29[35:0] == 12'd4095)) begin
+	if ((hispimodule2_data[40:5] == 12'd4095)) begin
 		hispimodule2_bit_offset <= 3'd5;
 	end
-	if ((sync_complexslicelowerer_slice_proxy30[35:0] == 12'd4095)) begin
+	if ((hispimodule2_data[41:6] == 12'd4095)) begin
 		hispimodule2_bit_offset <= 3'd6;
 	end
-	if ((sync_complexslicelowerer_slice_proxy31[35:0] == 12'd4095)) begin
+	if ((hispimodule2_data[42:7] == 12'd4095)) begin
 		hispimodule2_bit_offset <= 3'd7;
 	end
-	if ((sync_complexslicelowerer_slice_proxy32[35:0] == 12'd4095)) begin
+	if ((hispimodule2_data[43:8] == 12'd4095)) begin
 		hispimodule2_bit_offset <= 4'd8;
 	end
-	if ((sync_complexslicelowerer_slice_proxy33[35:0] == 12'd4095)) begin
+	if ((hispimodule2_data[44:9] == 12'd4095)) begin
 		hispimodule2_bit_offset <= 4'd9;
 	end
-	if ((sync_complexslicelowerer_slice_proxy34[35:0] == 12'd4095)) begin
+	if ((hispimodule2_data[45:10] == 12'd4095)) begin
 		hispimodule2_bit_offset <= 4'd10;
 	end
-	if ((sync_complexslicelowerer_slice_proxy35[35:0] == 12'd4095)) begin
+	if ((hispimodule2_data[46:11] == 12'd4095)) begin
 		hispimodule2_bit_offset <= 4'd11;
 	end
-	if ((sync_complexslicelowerer_slice_proxy36[35:0] == 12'd4095)) begin
+	if ((hispimodule3_data[35:0] == 12'd4095)) begin
 		hispimodule3_bit_offset <= 1'd0;
 	end
-	if ((sync_complexslicelowerer_slice_proxy37[35:0] == 12'd4095)) begin
+	if ((hispimodule3_data[36:1] == 12'd4095)) begin
 		hispimodule3_bit_offset <= 1'd1;
 	end
-	if ((sync_complexslicelowerer_slice_proxy38[35:0] == 12'd4095)) begin
+	if ((hispimodule3_data[37:2] == 12'd4095)) begin
 		hispimodule3_bit_offset <= 2'd2;
 	end
-	if ((sync_complexslicelowerer_slice_proxy39[35:0] == 12'd4095)) begin
+	if ((hispimodule3_data[38:3] == 12'd4095)) begin
 		hispimodule3_bit_offset <= 2'd3;
 	end
-	if ((sync_complexslicelowerer_slice_proxy40[35:0] == 12'd4095)) begin
+	if ((hispimodule3_data[39:4] == 12'd4095)) begin
 		hispimodule3_bit_offset <= 3'd4;
 	end
-	if ((sync_complexslicelowerer_slice_proxy41[35:0] == 12'd4095)) begin
+	if ((hispimodule3_data[40:5] == 12'd4095)) begin
 		hispimodule3_bit_offset <= 3'd5;
 	end
-	if ((sync_complexslicelowerer_slice_proxy42[35:0] == 12'd4095)) begin
+	if ((hispimodule3_data[41:6] == 12'd4095)) begin
 		hispimodule3_bit_offset <= 3'd6;
 	end
-	if ((sync_complexslicelowerer_slice_proxy43[35:0] == 12'd4095)) begin
+	if ((hispimodule3_data[42:7] == 12'd4095)) begin
 		hispimodule3_bit_offset <= 3'd7;
 	end
-	if ((sync_complexslicelowerer_slice_proxy44[35:0] == 12'd4095)) begin
+	if ((hispimodule3_data[43:8] == 12'd4095)) begin
 		hispimodule3_bit_offset <= 4'd8;
 	end
-	if ((sync_complexslicelowerer_slice_proxy45[35:0] == 12'd4095)) begin
+	if ((hispimodule3_data[44:9] == 12'd4095)) begin
 		hispimodule3_bit_offset <= 4'd9;
 	end
-	if ((sync_complexslicelowerer_slice_proxy46[35:0] == 12'd4095)) begin
+	if ((hispimodule3_data[45:10] == 12'd4095)) begin
 		hispimodule3_bit_offset <= 4'd10;
 	end
-	if ((sync_complexslicelowerer_slice_proxy47[35:0] == 12'd4095)) begin
+	if ((hispimodule3_data[46:11] == 12'd4095)) begin
 		hispimodule3_bit_offset <= 4'd11;
 	end
-	hispimodule0_word_offset <= 3'd5;
+	hispimodule0_word_offset <= 1'd1;
 	hispimodule0_aligned <= 1'd1;
-	if ((sync_complexslicelowerer_slice_proxy48[35:0] == 12'd4095)) begin
-		if ((sync_t_slice_proxy0[35:0] == 12'd4095)) begin
+	if ((hispimodule0_data[(hispimodule0_bit_offset + 4'd12)+:36] == 12'd4095)) begin
+		if ((hispimodule1_data[(hispimodule1_bit_offset + 1'd0)+:36] == 12'd4095)) begin
 			hispimodule1_word_offset <= 1'd0;
 			hispimodule1_aligned <= 1'd1;
 		end
-		if ((sync_t_slice_proxy1[35:0] == 12'd4095)) begin
+		if ((hispimodule1_data[(hispimodule1_bit_offset + 4'd12)+:36] == 12'd4095)) begin
 			hispimodule1_word_offset <= 1'd1;
 			hispimodule1_aligned <= 1'd1;
 		end
-		if ((sync_t_slice_proxy2[35:0] == 12'd4095)) begin
+		if ((hispimodule1_data[(hispimodule1_bit_offset + 5'd24)+:36] == 12'd4095)) begin
 			hispimodule1_word_offset <= 2'd2;
 			hispimodule1_aligned <= 1'd1;
 		end
-		if ((sync_t_slice_proxy3[35:0] == 12'd4095)) begin
-			hispimodule1_word_offset <= 2'd3;
-			hispimodule1_aligned <= 1'd1;
-		end
-		if ((sync_t_slice_proxy4[35:0] == 12'd4095)) begin
-			hispimodule1_word_offset <= 3'd4;
-			hispimodule1_aligned <= 1'd1;
-		end
-		if ((sync_t_slice_proxy5[35:0] == 12'd4095)) begin
-			hispimodule1_word_offset <= 3'd5;
-			hispimodule1_aligned <= 1'd1;
-		end
-		if ((sync_t_slice_proxy6[35:0] == 12'd4095)) begin
-			hispimodule1_word_offset <= 3'd6;
-			hispimodule1_aligned <= 1'd1;
-		end
-		if ((sync_t_slice_proxy7[35:0] == 12'd4095)) begin
-			hispimodule1_word_offset <= 3'd7;
-			hispimodule1_aligned <= 1'd1;
-		end
 	end
-	if ((sync_complexslicelowerer_slice_proxy49[35:0] == 12'd4095)) begin
-		if ((sync_t_slice_proxy8[35:0] == 12'd4095)) begin
+	if ((hispimodule0_data[(hispimodule0_bit_offset + 4'd12)+:36] == 12'd4095)) begin
+		if ((hispimodule2_data[(hispimodule2_bit_offset + 1'd0)+:36] == 12'd4095)) begin
 			hispimodule2_word_offset <= 1'd0;
 			hispimodule2_aligned <= 1'd1;
 		end
-		if ((sync_t_slice_proxy9[35:0] == 12'd4095)) begin
+		if ((hispimodule2_data[(hispimodule2_bit_offset + 4'd12)+:36] == 12'd4095)) begin
 			hispimodule2_word_offset <= 1'd1;
 			hispimodule2_aligned <= 1'd1;
 		end
-		if ((sync_t_slice_proxy10[35:0] == 12'd4095)) begin
+		if ((hispimodule2_data[(hispimodule2_bit_offset + 5'd24)+:36] == 12'd4095)) begin
 			hispimodule2_word_offset <= 2'd2;
 			hispimodule2_aligned <= 1'd1;
 		end
-		if ((sync_t_slice_proxy11[35:0] == 12'd4095)) begin
-			hispimodule2_word_offset <= 2'd3;
-			hispimodule2_aligned <= 1'd1;
-		end
-		if ((sync_t_slice_proxy12[35:0] == 12'd4095)) begin
-			hispimodule2_word_offset <= 3'd4;
-			hispimodule2_aligned <= 1'd1;
-		end
-		if ((sync_t_slice_proxy13[35:0] == 12'd4095)) begin
-			hispimodule2_word_offset <= 3'd5;
-			hispimodule2_aligned <= 1'd1;
-		end
-		if ((sync_t_slice_proxy14[35:0] == 12'd4095)) begin
-			hispimodule2_word_offset <= 3'd6;
-			hispimodule2_aligned <= 1'd1;
-		end
-		if ((sync_t_slice_proxy15[35:0] == 12'd4095)) begin
-			hispimodule2_word_offset <= 3'd7;
-			hispimodule2_aligned <= 1'd1;
-		end
 	end
-	if ((sync_complexslicelowerer_slice_proxy50[35:0] == 12'd4095)) begin
-		if ((sync_t_slice_proxy16[35:0] == 12'd4095)) begin
+	if ((hispimodule0_data[(hispimodule0_bit_offset + 4'd12)+:36] == 12'd4095)) begin
+		if ((hispimodule3_data[(hispimodule3_bit_offset + 1'd0)+:36] == 12'd4095)) begin
 			hispimodule3_word_offset <= 1'd0;
 			hispimodule3_aligned <= 1'd1;
 		end
-		if ((sync_t_slice_proxy17[35:0] == 12'd4095)) begin
+		if ((hispimodule3_data[(hispimodule3_bit_offset + 4'd12)+:36] == 12'd4095)) begin
 			hispimodule3_word_offset <= 1'd1;
 			hispimodule3_aligned <= 1'd1;
 		end
-		if ((sync_t_slice_proxy18[35:0] == 12'd4095)) begin
+		if ((hispimodule3_data[(hispimodule3_bit_offset + 5'd24)+:36] == 12'd4095)) begin
 			hispimodule3_word_offset <= 2'd2;
-			hispimodule3_aligned <= 1'd1;
-		end
-		if ((sync_t_slice_proxy19[35:0] == 12'd4095)) begin
-			hispimodule3_word_offset <= 2'd3;
-			hispimodule3_aligned <= 1'd1;
-		end
-		if ((sync_t_slice_proxy20[35:0] == 12'd4095)) begin
-			hispimodule3_word_offset <= 3'd4;
-			hispimodule3_aligned <= 1'd1;
-		end
-		if ((sync_t_slice_proxy21[35:0] == 12'd4095)) begin
-			hispimodule3_word_offset <= 3'd5;
-			hispimodule3_aligned <= 1'd1;
-		end
-		if ((sync_t_slice_proxy22[35:0] == 12'd4095)) begin
-			hispimodule3_word_offset <= 3'd6;
-			hispimodule3_aligned <= 1'd1;
-		end
-		if ((sync_t_slice_proxy23[35:0] == 12'd4095)) begin
-			hispimodule3_word_offset <= 3'd7;
 			hispimodule3_aligned <= 1'd1;
 		end
 	end
@@ -677,21 +439,21 @@ always @(posedge hispi_clk) begin
 		data3[3:2] <= next_value7;
 	end
 	if (hispi_rst) begin
-		hispimodule0_data <= 120'd1329227995784915872903807060280344575;
-		hispimodule0_word_offset <= 4'd0;
-		hispimodule0_bit_offset <= 4'd0;
+		hispimodule0_data <= 60'd1152921504606846975;
+		hispimodule0_word_offset <= 6'd0;
+		hispimodule0_bit_offset <= 6'd0;
 		hispimodule0_aligned <= 1'd0;
-		hispimodule1_data <= 120'd1329227995784915872903807060280344575;
-		hispimodule1_word_offset <= 4'd0;
-		hispimodule1_bit_offset <= 4'd0;
+		hispimodule1_data <= 60'd1152921504606846975;
+		hispimodule1_word_offset <= 6'd0;
+		hispimodule1_bit_offset <= 6'd0;
 		hispimodule1_aligned <= 1'd0;
-		hispimodule2_data <= 120'd1329227995784915872903807060280344575;
-		hispimodule2_word_offset <= 4'd0;
-		hispimodule2_bit_offset <= 4'd0;
+		hispimodule2_data <= 60'd1152921504606846975;
+		hispimodule2_word_offset <= 6'd0;
+		hispimodule2_bit_offset <= 6'd0;
 		hispimodule2_aligned <= 1'd0;
-		hispimodule3_data <= 120'd1329227995784915872903807060280344575;
-		hispimodule3_word_offset <= 4'd0;
-		hispimodule3_bit_offset <= 4'd0;
+		hispimodule3_data <= 60'd1152921504606846975;
+		hispimodule3_word_offset <= 6'd0;
+		hispimodule3_bit_offset <= 6'd0;
 		hispimodule3_aligned <= 1'd0;
 		found_frame_start <= 1'd0;
 		data0 <= 24'd16777215;
