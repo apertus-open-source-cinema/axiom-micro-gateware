@@ -9,17 +9,18 @@ from operator import inv
 #              (data[offset +: width] where offset can be a Signal)
 
 def hispi_filter_passthrough(config, pixel_data):
-    return pixel_data >> (config.hispi_bits - config.output_bits)
+    return (pixel_data >> (config.hispi_bits - config.output_bits))[:config.output_bits]
 
 default_config = { 
                     "hispi_bits": 12,
                     "input_bits": 6,
                     "buffersize": 5,
-                    "output_bits": 12,
+                    "output_bits": 8,
                     "num_lanes": 4,
                     "lane_inversion_map": [inv, inv, inv, inv],
                     "output_filter": hispi_filter_passthrough,
-                    "sync_lane": 0
+                    "sync_lane": 0,
+                    "padding_size":  32
                   }
 
 
@@ -197,9 +198,20 @@ class HispiDecoder(HispiBase):
         assert self.config.buffersize >= 4
 
         self.frame_start = Signal(reset = False)
+
         self.data_valid = Signal(reset = False)
-        self.data_out = [Signal(self.config.hispi_bits) for _ in range(self.config.num_lanes)]
+
+        data_actual_valid = Signal(reset = False)
+
+        self.data_out = [Signal(self.config.output_bits) for _ in range(self.config.num_lanes)]
         found_frame_start = Signal(reset = False)
+
+        padding_counter = Signal(bits_for(self.config.padding_size), reset = 0)
+
+        self.sync += If(self.data_valid, If(padding_counter + 1 < self.config.padding_size, padding_counter.eq(padding_counter + 1)).Else(padding_counter.eq(0)))
+
+        self.comb += If(data_actual_valid, self.data_valid.eq(1)).Elif(padding_counter != 0, self.data_valid.eq(1)).Else(self.data_valid.eq(0))
+
 
         crc = [Buffer(2, self.config.hispi_bits) for i in range(self.config.hispi_bits)]
 
@@ -255,7 +267,7 @@ class HispiDecoder(HispiBase):
                 NextState("FILLER")) 
 
         fsm.act("PIXEL_DATA",
-                self.data_valid.eq(1),
+                data_actual_valid.eq(1),
 
                 self.frame_start.eq(found_frame_start),
                 NextValue(found_frame_start, 0),
@@ -264,6 +276,32 @@ class HispiDecoder(HispiBase):
 
                 handle_sync_code_coming())
 
+@hispi_module
+class DoubleUp(HispiBase):
+    def __init__(self, data_in, data_valid_in, frame_start_in):
+        data_bits = self.config.output_bits * self.config.num_lanes
+
+        double_in = Signal((data_bits + 2) * 2)
+        counter = Signal(2, reset = True)
+        self.sync += If(data_valid_in, 
+                        If(counter == 2,
+                           counter.eq(0)
+                          ).Else(counter[0].eq(~counter[0]))
+                     ).Else(counter.eq(2))
+        
+        self.sync += double_in[data_bits + 2:2 * data_bits + 2].eq(data_in)
+        self.sync += double_in[-2].eq(data_valid_in)
+        self.sync += double_in[-1].eq(frame_start_in)
+        self.sync += double_in[:data_bits + 2].eq(double_in[data_bits + 2:])
+
+
+        self.data_out = Signal(2 * data_bits, reset = 0)
+        self.data_valid = Signal(reset = 0)
+        self.frame_start = Signal(reset = 0)
+
+        self.comb += self.data_out.eq(Cat(double_in[:data_bits], double_in[data_bits + 2: 2 * data_bits + 2]))
+        self.comb += self.data_valid.eq((double_in[data_bits + 1 - 1] | double_in[-2]) & counter[0])
+        self.comb += self.frame_start.eq(double_in[data_bits + 2 - 1] | double_in[-1])
 
 @hispi_module
 class HispiRx(HispiBase):
@@ -288,15 +326,16 @@ class HispiRx(HispiBase):
         self.submodules += decoder
 
         self.data_out = Signal(self.config.output_bits * self.config.num_lanes)
-        self.converter_out = Signal(self.config.hispi_bits * self.config.num_lanes)
-        self.align_out = Signal(self.config.hispi_bits * self.config.num_lanes)
 
-        self.comb += self.align_out.eq(Cat(*[bufs[i].get_aligned_words(count = 1) for i in range(self.config.num_lanes)]))
+#        self.comb += self.align_out.eq(Cat(*[bufs[i].get_aligned_words(count = 1) for i in range(self.config.num_lanes)]))
+#        self.comb += self.converter_out.eq(Cat(*self.cdc))
 
         self.comb += self.data_out.eq(Cat(*decoder.data_out))
-        self.comb += self.converter_out.eq(Cat(*self.cdc))
+    
+        double_up = ClockDomainsRenamer("hispi")(DoubleUp(config=self.config, data_in=self.data_out, data_valid_in=decoder.data_valid, frame_start_in=decoder.frame_start))
+        self.submodules += double_up
 
-        self.ios = set({self.data_in}) | set({decoder.data_valid, decoder.frame_start, self.data_out, self.converter_out, self.align_out})
+        self.ios = set({self.data_in}) | set({double_up.data_valid, double_up.frame_start, double_up.data_out})
 
 
 passthrough = lambda x: x
@@ -356,7 +395,7 @@ def test_hispi_rx():
 
 
 
-    run_simulation(dut, testbench(), clocks = {'sys': 10, 'hispi': (20, 10)}, vcd_name="hispi_rx.vcd")
+    run_simulation(dut, testbench(), clocks = {'sys': 10, 'hispi': (20, 10), 'half_hispi': (40, 20)}, vcd_name="hispi_rx.vcd")
 
 def test_decoder():
     dut = HispiRx(config = hispi_config())
@@ -414,7 +453,7 @@ def test_decoder():
 
 
 
-    run_simulation(dut, testbench(), clocks = {'sys': 10, 'hispi': (20, 10)}, vcd_name="hispi_rx.vcd")
+    run_simulation(dut, testbench(), clocks = {'sys': 10, 'hispi': (20, 0), 'half_hispi': (40, 00)}, vcd_name="hispi_rx.vcd")
 
 
 @hispi_module

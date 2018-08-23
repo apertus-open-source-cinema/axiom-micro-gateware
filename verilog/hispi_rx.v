@@ -1,11 +1,9 @@
 /* Machine-generated using Migen */
 module hispi_rx(
 	input [23:0] data_in,
-	output reg frame_start,
-	output reg data_valid,
-	output [47:0] data_out,
-	output [47:0] converter_out,
-	output [47:0] align_out,
+	output [63:0] data_out,
+	output data_valid,
+	output frame_start,
 	input hispi_clk,
 	input hispi_rst,
 	input sys_clk,
@@ -24,7 +22,7 @@ reg [59:0] hispimodule0_data = 60'd1152921504606846975;
 reg [5:0] hispimodule0_word_offset = 6'd0;
 reg [5:0] hispimodule0_bit_offset = 6'd0;
 reg hispimodule0_aligned = 1'd0;
-reg [59:0] hispimodule1_data = 60'd1152921504606846975;
+reg [59:0] hispimodule1_data0 = 60'd1152921504606846975;
 reg [5:0] hispimodule1_word_offset = 6'd0;
 reg [5:0] hispimodule1_bit_offset = 6'd0;
 reg hispimodule1_aligned = 1'd0;
@@ -36,19 +34,26 @@ reg [59:0] hispimodule3_data = 60'd1152921504606846975;
 reg [5:0] hispimodule3_word_offset = 6'd0;
 reg [5:0] hispimodule3_bit_offset = 6'd0;
 reg hispimodule3_aligned = 1'd0;
-reg [11:0] hispimodule10;
-reg [11:0] hispimodule11;
-reg [11:0] hispimodule12;
-reg [11:0] hispimodule13;
-reg found_frame_start = 1'd0;
-reg [23:0] data0 = 24'd16777215;
-reg [23:0] data1 = 24'd16777215;
-reg [23:0] data2 = 24'd16777215;
-reg [23:0] data3 = 24'd16777215;
+reg hispimodule1_frame_start;
+reg hispimodule1_data_valid;
+reg hispimodule1_data_actual_valid;
+reg [7:0] hispimodule1_hispimodule10;
+reg [7:0] hispimodule1_hispimodule11;
+reg [7:0] hispimodule1_hispimodule12;
+reg [7:0] hispimodule1_hispimodule13;
+reg hispimodule1_found_frame_start = 1'd0;
+reg [5:0] hispimodule1_padding_counter = 6'd0;
+reg [23:0] hispimodule1_data1 = 24'd16777215;
+reg [23:0] hispimodule1_data2 = 24'd16777215;
+reg [23:0] hispimodule1_data3 = 24'd16777215;
+reg [23:0] hispimodule1_data4 = 24'd16777215;
+wire [31:0] data_out_1;
+reg [67:0] hispimodule2_double_in = 68'd0;
+reg [1:0] hispimodule2_counter = 2'd1;
 reg [3:0] state = 4'd0;
 reg [3:0] next_state;
-reg found_frame_start_next_value;
-reg found_frame_start_next_value_ce;
+reg hispimodule1_found_frame_start_next_value;
+reg hispimodule1_found_frame_start_next_value_ce;
 reg [1:0] next_value0;
 reg next_value_ce0;
 reg [1:0] next_value1;
@@ -65,6 +70,10 @@ reg [1:0] next_value6;
 reg next_value_ce6;
 reg [1:0] next_value7;
 reg next_value_ce7;
+wire [11:0] slice_proxy0;
+wire [11:0] slice_proxy1;
+wire [11:0] slice_proxy2;
+wire [11:0] slice_proxy3;
 (* async_reg = "true", mr_ff = "true", dont_touch = "true" *) reg [11:0] xilinxmultiregimpl0_regs0 = 12'd0;
 (* async_reg = "true", dont_touch = "true" *) reg [11:0] xilinxmultiregimpl0_regs1 = 12'd0;
 (* async_reg = "true", mr_ff = "true", dont_touch = "true" *) reg [11:0] xilinxmultiregimpl1_regs0 = 12'd0;
@@ -82,23 +91,40 @@ reg dummy_s;
 initial dummy_s <= 1'd0;
 // synthesis translate_on
 
-assign align_out = {hispimodule3_data[(hispimodule3_bit_offset + (4'd12 * (hispimodule3_word_offset + 1'd0)))+:12], hispimodule2_data[(hispimodule2_bit_offset + (4'd12 * (hispimodule2_word_offset + 1'd0)))+:12], hispimodule1_data[(hispimodule1_bit_offset + (4'd12 * (hispimodule1_word_offset + 1'd0)))+:12], hispimodule0_data[(hispimodule0_bit_offset + (4'd12 * (hispimodule0_word_offset + 1'd0)))+:12]};
-assign data_out = {hispimodule13, hispimodule12, hispimodule11, hispimodule10};
-assign converter_out = {hispimodule3, hispimodule2, hispimodule1, hispimodule0};
+assign data_out_1 = {hispimodule1_hispimodule13, hispimodule1_hispimodule12, hispimodule1_hispimodule11, hispimodule1_hispimodule10};
 
 // synthesis translate_off
 reg dummy_d;
 // synthesis translate_on
 always @(*) begin
-	frame_start <= 1'd0;
-	data_valid <= 1'd0;
-	hispimodule10 <= 12'd0;
-	hispimodule11 <= 12'd0;
-	hispimodule12 <= 12'd0;
-	hispimodule13 <= 12'd0;
+	hispimodule1_data_valid <= 1'd0;
+	if (hispimodule1_data_actual_valid) begin
+		hispimodule1_data_valid <= 1'd1;
+	end else begin
+		if ((hispimodule1_padding_counter != 1'd0)) begin
+			hispimodule1_data_valid <= 1'd1;
+		end else begin
+			hispimodule1_data_valid <= 1'd0;
+		end
+	end
+// synthesis translate_off
+	dummy_d <= dummy_s;
+// synthesis translate_on
+end
+
+// synthesis translate_off
+reg dummy_d_1;
+// synthesis translate_on
+always @(*) begin
+	hispimodule1_frame_start <= 1'd0;
+	hispimodule1_data_actual_valid <= 1'd0;
+	hispimodule1_hispimodule10 <= 8'd0;
+	hispimodule1_hispimodule11 <= 8'd0;
+	hispimodule1_hispimodule12 <= 8'd0;
+	hispimodule1_hispimodule13 <= 8'd0;
 	next_state <= 4'd0;
-	found_frame_start_next_value <= 1'd0;
-	found_frame_start_next_value_ce <= 1'd0;
+	hispimodule1_found_frame_start_next_value <= 1'd0;
+	hispimodule1_found_frame_start_next_value_ce <= 1'd0;
 	next_value0 <= 2'd0;
 	next_value_ce0 <= 1'd0;
 	next_value1 <= 2'd0;
@@ -137,8 +163,8 @@ always @(*) begin
 					next_state <= 4'd8;
 				end
 				2'd3: begin
-					found_frame_start_next_value <= 1'd1;
-					found_frame_start_next_value_ce <= 1'd1;
+					hispimodule1_found_frame_start_next_value <= 1'd1;
+					hispimodule1_found_frame_start_next_value_ce <= 1'd1;
 					next_state <= 4'd8;
 				end
 				3'd5: begin
@@ -154,8 +180,8 @@ always @(*) begin
 					next_state <= 1'd1;
 				end
 				5'd19: begin
-					found_frame_start_next_value <= 1'd1;
-					found_frame_start_next_value_ce <= 1'd1;
+					hispimodule1_found_frame_start_next_value <= 1'd1;
+					hispimodule1_found_frame_start_next_value_ce <= 1'd1;
 					next_state <= 1'd1;
 				end
 				default: begin
@@ -166,7 +192,7 @@ always @(*) begin
 		3'd6: begin
 			next_value0 <= hispimodule0_data[(hispimodule0_bit_offset + (4'd12 * (hispimodule0_word_offset + 1'd0)))+:12];
 			next_value_ce0 <= 1'd1;
-			next_value1 <= hispimodule1_data[(hispimodule1_bit_offset + (4'd12 * (hispimodule1_word_offset + 1'd0)))+:12];
+			next_value1 <= hispimodule1_data0[(hispimodule1_bit_offset + (4'd12 * (hispimodule1_word_offset + 1'd0)))+:12];
 			next_value_ce1 <= 1'd1;
 			next_value2 <= hispimodule2_data[(hispimodule2_bit_offset + (4'd12 * (hispimodule2_word_offset + 1'd0)))+:12];
 			next_value_ce2 <= 1'd1;
@@ -177,7 +203,7 @@ always @(*) begin
 		3'd7: begin
 			next_value4 <= hispimodule0_data[(hispimodule0_bit_offset + (4'd12 * (hispimodule0_word_offset + 1'd0)))+:12];
 			next_value_ce4 <= 1'd1;
-			next_value5 <= hispimodule1_data[(hispimodule1_bit_offset + (4'd12 * (hispimodule1_word_offset + 1'd0)))+:12];
+			next_value5 <= hispimodule1_data0[(hispimodule1_bit_offset + (4'd12 * (hispimodule1_word_offset + 1'd0)))+:12];
 			next_value_ce5 <= 1'd1;
 			next_value6 <= hispimodule2_data[(hispimodule2_bit_offset + (4'd12 * (hispimodule2_word_offset + 1'd0)))+:12];
 			next_value_ce6 <= 1'd1;
@@ -186,14 +212,14 @@ always @(*) begin
 			next_state <= 1'd1;
 		end
 		4'd8: begin
-			data_valid <= 1'd1;
-			frame_start <= found_frame_start;
-			found_frame_start_next_value <= 1'd0;
-			found_frame_start_next_value_ce <= 1'd1;
-			hispimodule10 <= (hispimodule0_data[(hispimodule0_bit_offset + (4'd12 * (hispimodule0_word_offset + 1'd0)))+:12] >>> 1'd0);
-			hispimodule11 <= (hispimodule1_data[(hispimodule1_bit_offset + (4'd12 * (hispimodule1_word_offset + 1'd0)))+:12] >>> 1'd0);
-			hispimodule12 <= (hispimodule2_data[(hispimodule2_bit_offset + (4'd12 * (hispimodule2_word_offset + 1'd0)))+:12] >>> 1'd0);
-			hispimodule13 <= (hispimodule3_data[(hispimodule3_bit_offset + (4'd12 * (hispimodule3_word_offset + 1'd0)))+:12] >>> 1'd0);
+			hispimodule1_data_actual_valid <= 1'd1;
+			hispimodule1_frame_start <= hispimodule1_found_frame_start;
+			hispimodule1_found_frame_start_next_value <= 1'd0;
+			hispimodule1_found_frame_start_next_value_ce <= 1'd1;
+			hispimodule1_hispimodule10 <= slice_proxy0[7:0];
+			hispimodule1_hispimodule11 <= slice_proxy1[7:0];
+			hispimodule1_hispimodule12 <= slice_proxy2[7:0];
+			hispimodule1_hispimodule13 <= slice_proxy3[7:0];
 			if ((hispimodule0_data[(hispimodule0_bit_offset + (4'd12 * (hispimodule0_word_offset + 1'd1)))+:36] == 12'd4095)) begin
 				next_state <= 2'd2;
 			end
@@ -205,9 +231,16 @@ always @(*) begin
 		end
 	endcase
 // synthesis translate_off
-	dummy_d <= dummy_s;
+	dummy_d_1 <= dummy_s;
 // synthesis translate_on
 end
+assign data_out = {hispimodule2_double_in[65:34], hispimodule2_double_in[31:0]};
+assign data_valid = ((hispimodule2_double_in[32] | hispimodule2_double_in[66]) & hispimodule2_counter[0]);
+assign frame_start = (hispimodule2_double_in[33] | hispimodule2_double_in[67]);
+assign slice_proxy0 = (hispimodule0_data[(hispimodule0_bit_offset + (4'd12 * (hispimodule0_word_offset + 1'd0)))+:12] >>> 3'd4);
+assign slice_proxy1 = (hispimodule1_data0[(hispimodule1_bit_offset + (4'd12 * (hispimodule1_word_offset + 1'd0)))+:12] >>> 3'd4);
+assign slice_proxy2 = (hispimodule2_data[(hispimodule2_bit_offset + (4'd12 * (hispimodule2_word_offset + 1'd0)))+:12] >>> 3'd4);
+assign slice_proxy3 = (hispimodule3_data[(hispimodule3_bit_offset + (4'd12 * (hispimodule3_word_offset + 1'd0)))+:12] >>> 3'd4);
 assign hispimodule0 = xilinxmultiregimpl0_regs1;
 assign hispimodule1 = xilinxmultiregimpl1_regs1;
 assign hispimodule2 = xilinxmultiregimpl2_regs1;
@@ -216,8 +249,8 @@ assign hispimodule3 = xilinxmultiregimpl3_regs1;
 always @(posedge hispi_clk) begin
 	hispimodule0_data[47:0] <= hispimodule0_data[59:12];
 	hispimodule0_data[59:48] <= hispimodule0;
-	hispimodule1_data[47:0] <= hispimodule1_data[59:12];
-	hispimodule1_data[59:48] <= hispimodule1;
+	hispimodule1_data0[47:0] <= hispimodule1_data0[59:12];
+	hispimodule1_data0[59:48] <= hispimodule1;
 	hispimodule2_data[47:0] <= hispimodule2_data[59:12];
 	hispimodule2_data[59:48] <= hispimodule2;
 	hispimodule3_data[47:0] <= hispimodule3_data[59:12];
@@ -258,40 +291,40 @@ always @(posedge hispi_clk) begin
 	if ((hispimodule0_data[46:11] == 12'd4095)) begin
 		hispimodule0_bit_offset <= 4'd11;
 	end
-	if ((hispimodule1_data[35:0] == 12'd4095)) begin
+	if ((hispimodule1_data0[35:0] == 12'd4095)) begin
 		hispimodule1_bit_offset <= 1'd0;
 	end
-	if ((hispimodule1_data[36:1] == 12'd4095)) begin
+	if ((hispimodule1_data0[36:1] == 12'd4095)) begin
 		hispimodule1_bit_offset <= 1'd1;
 	end
-	if ((hispimodule1_data[37:2] == 12'd4095)) begin
+	if ((hispimodule1_data0[37:2] == 12'd4095)) begin
 		hispimodule1_bit_offset <= 2'd2;
 	end
-	if ((hispimodule1_data[38:3] == 12'd4095)) begin
+	if ((hispimodule1_data0[38:3] == 12'd4095)) begin
 		hispimodule1_bit_offset <= 2'd3;
 	end
-	if ((hispimodule1_data[39:4] == 12'd4095)) begin
+	if ((hispimodule1_data0[39:4] == 12'd4095)) begin
 		hispimodule1_bit_offset <= 3'd4;
 	end
-	if ((hispimodule1_data[40:5] == 12'd4095)) begin
+	if ((hispimodule1_data0[40:5] == 12'd4095)) begin
 		hispimodule1_bit_offset <= 3'd5;
 	end
-	if ((hispimodule1_data[41:6] == 12'd4095)) begin
+	if ((hispimodule1_data0[41:6] == 12'd4095)) begin
 		hispimodule1_bit_offset <= 3'd6;
 	end
-	if ((hispimodule1_data[42:7] == 12'd4095)) begin
+	if ((hispimodule1_data0[42:7] == 12'd4095)) begin
 		hispimodule1_bit_offset <= 3'd7;
 	end
-	if ((hispimodule1_data[43:8] == 12'd4095)) begin
+	if ((hispimodule1_data0[43:8] == 12'd4095)) begin
 		hispimodule1_bit_offset <= 4'd8;
 	end
-	if ((hispimodule1_data[44:9] == 12'd4095)) begin
+	if ((hispimodule1_data0[44:9] == 12'd4095)) begin
 		hispimodule1_bit_offset <= 4'd9;
 	end
-	if ((hispimodule1_data[45:10] == 12'd4095)) begin
+	if ((hispimodule1_data0[45:10] == 12'd4095)) begin
 		hispimodule1_bit_offset <= 4'd10;
 	end
-	if ((hispimodule1_data[46:11] == 12'd4095)) begin
+	if ((hispimodule1_data0[46:11] == 12'd4095)) begin
 		hispimodule1_bit_offset <= 4'd11;
 	end
 	if ((hispimodule2_data[35:0] == 12'd4095)) begin
@@ -369,15 +402,15 @@ always @(posedge hispi_clk) begin
 	hispimodule0_word_offset <= 1'd1;
 	hispimodule0_aligned <= 1'd1;
 	if ((hispimodule0_data[(hispimodule0_bit_offset + 4'd12)+:36] == 12'd4095)) begin
-		if ((hispimodule1_data[(hispimodule1_bit_offset + 1'd0)+:36] == 12'd4095)) begin
+		if ((hispimodule1_data0[(hispimodule1_bit_offset + 1'd0)+:36] == 12'd4095)) begin
 			hispimodule1_word_offset <= 1'd0;
 			hispimodule1_aligned <= 1'd1;
 		end
-		if ((hispimodule1_data[(hispimodule1_bit_offset + 4'd12)+:36] == 12'd4095)) begin
+		if ((hispimodule1_data0[(hispimodule1_bit_offset + 4'd12)+:36] == 12'd4095)) begin
 			hispimodule1_word_offset <= 1'd1;
 			hispimodule1_aligned <= 1'd1;
 		end
-		if ((hispimodule1_data[(hispimodule1_bit_offset + 5'd24)+:36] == 12'd4095)) begin
+		if ((hispimodule1_data0[(hispimodule1_bit_offset + 5'd24)+:36] == 12'd4095)) begin
 			hispimodule1_word_offset <= 2'd2;
 			hispimodule1_aligned <= 1'd1;
 		end
@@ -410,40 +443,60 @@ always @(posedge hispi_clk) begin
 			hispimodule3_aligned <= 1'd1;
 		end
 	end
+	if (hispimodule1_data_valid) begin
+		if (((hispimodule1_padding_counter + 1'd1) < 6'd32)) begin
+			hispimodule1_padding_counter <= (hispimodule1_padding_counter + 1'd1);
+		end else begin
+			hispimodule1_padding_counter <= 1'd0;
+		end
+	end
 	state <= next_state;
-	if (found_frame_start_next_value_ce) begin
-		found_frame_start <= found_frame_start_next_value;
+	if (hispimodule1_found_frame_start_next_value_ce) begin
+		hispimodule1_found_frame_start <= hispimodule1_found_frame_start_next_value;
 	end
 	if (next_value_ce0) begin
-		data0[1:0] <= next_value0;
+		hispimodule1_data1[1:0] <= next_value0;
 	end
 	if (next_value_ce1) begin
-		data1[1:0] <= next_value1;
+		hispimodule1_data2[1:0] <= next_value1;
 	end
 	if (next_value_ce2) begin
-		data2[1:0] <= next_value2;
+		hispimodule1_data3[1:0] <= next_value2;
 	end
 	if (next_value_ce3) begin
-		data3[1:0] <= next_value3;
+		hispimodule1_data4[1:0] <= next_value3;
 	end
 	if (next_value_ce4) begin
-		data0[3:2] <= next_value4;
+		hispimodule1_data1[3:2] <= next_value4;
 	end
 	if (next_value_ce5) begin
-		data1[3:2] <= next_value5;
+		hispimodule1_data2[3:2] <= next_value5;
 	end
 	if (next_value_ce6) begin
-		data2[3:2] <= next_value6;
+		hispimodule1_data3[3:2] <= next_value6;
 	end
 	if (next_value_ce7) begin
-		data3[3:2] <= next_value7;
+		hispimodule1_data4[3:2] <= next_value7;
 	end
+	if (hispimodule1_data_valid) begin
+		if ((hispimodule2_counter == 2'd2)) begin
+			hispimodule2_counter <= 1'd0;
+		end else begin
+			hispimodule2_counter[0] <= (~hispimodule2_counter[0]);
+		end
+	end else begin
+		hispimodule2_counter <= 2'd2;
+	end
+	hispimodule2_double_in[65:34] <= data_out_1;
+	hispimodule2_double_in[66] <= hispimodule1_data_valid;
+	hispimodule2_double_in[67] <= hispimodule1_frame_start;
+	hispimodule2_double_in[33:0] <= hispimodule2_double_in[67:34];
 	if (hispi_rst) begin
 		hispimodule0_data <= 60'd1152921504606846975;
 		hispimodule0_word_offset <= 6'd0;
 		hispimodule0_bit_offset <= 6'd0;
 		hispimodule0_aligned <= 1'd0;
-		hispimodule1_data <= 60'd1152921504606846975;
+		hispimodule1_data0 <= 60'd1152921504606846975;
 		hispimodule1_word_offset <= 6'd0;
 		hispimodule1_bit_offset <= 6'd0;
 		hispimodule1_aligned <= 1'd0;
@@ -455,11 +508,14 @@ always @(posedge hispi_clk) begin
 		hispimodule3_word_offset <= 6'd0;
 		hispimodule3_bit_offset <= 6'd0;
 		hispimodule3_aligned <= 1'd0;
-		found_frame_start <= 1'd0;
-		data0 <= 24'd16777215;
-		data1 <= 24'd16777215;
-		data2 <= 24'd16777215;
-		data3 <= 24'd16777215;
+		hispimodule1_found_frame_start <= 1'd0;
+		hispimodule1_padding_counter <= 6'd0;
+		hispimodule1_data1 <= 24'd16777215;
+		hispimodule1_data2 <= 24'd16777215;
+		hispimodule1_data3 <= 24'd16777215;
+		hispimodule1_data4 <= 24'd16777215;
+		hispimodule2_double_in <= 68'd0;
+		hispimodule2_counter <= 2'd1;
 		state <= 4'd0;
 	end
 	xilinxmultiregimpl0_regs0 <= hispimodule00;
