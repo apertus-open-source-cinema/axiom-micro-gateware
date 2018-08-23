@@ -1,19 +1,6 @@
 from migen import *
 from math import log
 
-
-
-counter = Signal(8)
-
-self.sync += If(counter == 24,
-                counter.eq(0)
-             ).Else(
-                counter.eq(counter + 1)
-             )
-
-
-
-
 class Logarithmizer(Module):
     """
     Decimates a n bit value to a m bit value on a logarithmic scale.

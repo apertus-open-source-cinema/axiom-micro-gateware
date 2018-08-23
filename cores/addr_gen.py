@@ -3,7 +3,7 @@ from migen import *
 
 class AddrGen(Module):
     """ Generate adresses for a multi buffer memory writer with 1 cycle latency """
-    def __init__(self, base_addrs=[0x0f800000 + i * 0x400000 for i in range(1)], addr_bits=32, inc=8*16, max_addr=0x1a000000):
+    def __init__(self, data_bits=64, buffer_index_addr=0x19000000, base_addrs=[0x0f800000 + i * 0x400000 for i in range(4)], addr_bits=32, inc=8*16, max_addr=0x1a000000):
         """
         :param base_addrs: a list containing the base addresses of the buffers
         :param addr_bits: the number of bits of the memory addresses. Normally 32 or 64
@@ -11,12 +11,17 @@ class AddrGen(Module):
         """
 
         self.addr = Signal(addr_bits, reset=base_addrs[0])
+        self.out_addr = Signal(addr_bits, reset=base_addrs[0])
+
         self.switch = Signal(reset=0)
         self.data_valid = Signal(reset = 0)
         self.addr_valid = Signal(reset = 0)
+        self.data_in = Signal(data_bits, reset=0)
+        self.data_out = Signal(data_bits, reset=0)
+        self.data_out_valid = Signal(reset=0)
 
-        self.ios = {self.switch, self.data_valid} | \
-                   {self.addr, self.addr_valid}
+        self.ios = {self.switch, self.data_valid, self.data_in} | \
+                   {self.out_addr, self.addr_valid, self.data_out}
 
         
         burst_size = 16
@@ -30,6 +35,28 @@ class AddrGen(Module):
 
         increment = Signal(reset=0)
         counter = Signal(bits_for(burst_size), reset = 0)
+
+        # write the current buffer adress to a known location, when data valid is low (when we change frames)
+        addr_write_counter = Signal(max=burst_size)
+        self.sync += If(~self.data_valid,
+                        If(addr_write_counter < burst_size,
+                            addr_write_counter.eq(addr_write_counter + 1),
+                        )
+                    ).Else(
+                        addr_write_counter.eq(0),
+                    )
+
+        self.comb += If((addr_write_counter < burst_size) &  ~self.data_valid,
+                            self.data_out.eq(base_addrs_array[Mux(selection == 0, len(base_addrs) - 1, selection)]),
+                            self.out_addr.eq(buffer_index_addr),
+                            self.data_out_valid.eq(True),
+                    ).Elif(self.data_valid,
+                            self.out_addr.eq(self.addr),
+                            self.data_out.eq(self.data_in),
+                            self.data_out_valid.eq(True),
+                    ).Else(
+                            self.data_out_valid.eq(True),
+                    )
 
         # generate a new address for every `burst_size` data words
         # counter counts the number of data words
@@ -121,20 +148,20 @@ def test_addr_gen():
     run_simulation(device, testbench())
 
 
+def test_addr_gen():
+    addrs = []
+    for i in range(1):
+        addrs.append(0x0f800000 + i * 0x400000)
+    dut = AddrGen(addrs, 32, 64)  ## burst size of 16 -> 4 * 16
+    def testbench():
+        for i in range(200):
+            yield dut.switch.eq(0)
+            yield dut.data_valid.eq(1)
+            yield 
+            if i == 100:
+                yield dut.switch.eq(1)
 
-addrs = []
-for i in range(1):
-    addrs.append(0x0f800000 + i * 0x400000)
-dut = AddrGen(addrs, 32, 64)  ## burst size of 16 -> 4 * 16
-def testbench():
-    for i in range(200):
-        yield dut.switch.eq(0)
-        yield dut.data_valid.eq(1)
-        yield 
-        if i == 100:
-            yield dut.switch.eq(1)
-
-        yield dut.data_valid.eq(0)
-        yield
-    
-run_simulation(dut, testbench(), vcd_name="addr.vcd")
+            yield dut.data_valid.eq(0)
+            yield
+        
+    run_simulation(dut, testbench(), vcd_name="addr.vcd")
