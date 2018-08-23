@@ -11,17 +11,18 @@ class AddrGen(Module):
         """
 
         self.addr = Signal(addr_bits, reset=base_addrs[0])
-        self.out_addr = Signal(addr_bits, reset=base_addrs[0])
+        self.out_addr = Signal(addr_bits, reset=base_addrs[0], name_override="addr")
 
         self.switch = Signal(reset=0)
         self.data_valid = Signal(reset = 0)
         self.addr_valid = Signal(reset = 0)
+        self.addr_out_valid = Signal(reset = 0, name_override="addr_valid")
         self.data_in = Signal(data_bits, reset=0)
         self.data_out = Signal(data_bits, reset=0)
         self.data_out_valid = Signal(reset=0)
 
         self.ios = {self.switch, self.data_valid, self.data_in} | \
-                   {self.out_addr, self.addr_valid, self.data_out, self.data_out_valid}
+                   {self.out_addr, self.addr_out_valid, self.data_out_valid, self.data_out}
 
         
         burst_size = 16
@@ -37,25 +38,32 @@ class AddrGen(Module):
         counter = Signal(bits_for(burst_size), reset = 0)
 
         # write the current buffer adress to a known location, when data valid is low (when we change frames)
-        addr_write_counter = Signal(max=burst_size + min_valid_low)
+        addr_write_counter = Signal(bits_for(burst_size + min_valid_low))
         self.sync += If(~self.data_valid,
-                        If(addr_write_counter < burst_size + min_valid_low,
+                        If(addr_write_counter < (burst_size + min_valid_low),
                             addr_write_counter.eq(addr_write_counter + 1),
                         )
                     ).Else(
                         addr_write_counter.eq(0),
                     )
 
-        self.comb += If((addr_write_counter < burst_size) & (addr_write_counter > min_valid_low) &  ~self.data_valid,
+        self.comb += If((addr_write_counter > min_valid_low) & (addr_write_counter < (burst_size + min_valid_low)) &  ~self.data_valid,
                             self.data_out.eq(base_addrs_array[Mux(selection == 0, len(base_addrs) - 1, selection)]),
                             self.out_addr.eq(buffer_index_addr),
                             self.data_out_valid.eq(True),
+                            If(addr_write_counter == (min_valid_low + 1),
+                                self.addr_out_valid(True),
+                            ).Else(
+                                self.addr_out_valid.eq(False),
+                            )
                     ).Elif(self.data_valid,
                             self.out_addr.eq(self.addr),
                             self.data_out.eq(self.data_in),
                             self.data_out_valid.eq(True),
+                            self.addr_out_valid(self.addr_valid),
                     ).Else(
-                            self.data_out_valid.eq(True),
+                            self.data_out_valid.eq(False),
+                            self.addr_valid.eq(False),
                     )
 
         # generate a new address for every `burst_size` data words
