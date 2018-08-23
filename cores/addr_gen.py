@@ -3,7 +3,7 @@ from migen import *
 
 class AddrGen(Module):
     """ Generate adresses for a multi buffer memory writer with 1 cycle latency """
-    def __init__(self, data_bits=64, buffer_index_addr=0x19000000, base_addrs=[0x0f800000 + i * 0x400000 for i in range(4)], addr_bits=32, inc=8*16, max_addr=0x1a000000):
+    def __init__(self, data_bits=64, buffer_index_addr=0x19000000, base_addrs=[0x0f800000 + i * 0x400000 for i in range(4)], addr_bits=32, inc=8*16, max_addr=0x1a000000, min_valid_low=100):
         """
         :param base_addrs: a list containing the base addresses of the buffers
         :param addr_bits: the number of bits of the memory addresses. Normally 32 or 64
@@ -21,7 +21,7 @@ class AddrGen(Module):
         self.data_out_valid = Signal(reset=0)
 
         self.ios = {self.switch, self.data_valid, self.data_in} | \
-                   {self.out_addr, self.addr_valid, self.data_out}
+                   {self.out_addr, self.addr_valid, self.data_out, self.data_out_valid}
 
         
         burst_size = 16
@@ -37,16 +37,16 @@ class AddrGen(Module):
         counter = Signal(bits_for(burst_size), reset = 0)
 
         # write the current buffer adress to a known location, when data valid is low (when we change frames)
-        addr_write_counter = Signal(max=burst_size)
+        addr_write_counter = Signal(max=burst_size + min_valid_low)
         self.sync += If(~self.data_valid,
-                        If(addr_write_counter < burst_size,
+                        If(addr_write_counter < burst_size + min_valid_low,
                             addr_write_counter.eq(addr_write_counter + 1),
                         )
                     ).Else(
                         addr_write_counter.eq(0),
                     )
 
-        self.comb += If((addr_write_counter < burst_size) &  ~self.data_valid,
+        self.comb += If((addr_write_counter < burst_size) & (addr_write_counter > min_valid_low) &  ~self.data_valid,
                             self.data_out.eq(base_addrs_array[Mux(selection == 0, len(base_addrs) - 1, selection)]),
                             self.out_addr.eq(buffer_index_addr),
                             self.data_out_valid.eq(True),
