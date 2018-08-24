@@ -34,9 +34,6 @@ class AddrGen(Module):
 
         selection = Signal(bits_for(num_addr))
 
-        increment = Signal(reset=0)
-        counter = Signal(bits_for(burst_size), reset = 0)
-
         # write the current buffer adress to a known location, when data valid is low (when we change frames)
         addr_write_counter = Signal(bits_for(burst_size + min_valid_low))
         self.sync += If(~self.data_valid,
@@ -68,6 +65,9 @@ class AddrGen(Module):
 
         # generate a new address for every `burst_size` data words
         # counter counts the number of data words
+        increment = Signal(reset=0)
+        counter = Signal(bits_for(burst_size), reset = 0)
+        
         self.comb += If(counter == 0,
                         If(self.data_valid,
                            increment.eq(1)
@@ -101,16 +101,18 @@ class AddrGen(Module):
                         If(selection == num_addr - 1,
                            base_addr.eq(base_addrs[0]),
                         ).Else(
-                           base_addr.eq(base_addrs_array[selection + 1]))
+                           base_addr.eq(base_addrs_array[selection + 1])
+                        )
                      ).Else(
-                           base_addr.eq(base_addrs_array[selection])
+                        base_addr.eq(base_addrs_array[selection])
                      )
                        
 
         self.comb += If(self.switch,
                         self.addr.eq(base_addr)
                      ).Else(
-                        self.addr.eq(base_addr + offset))
+                        self.addr.eq(base_addr + offset)
+                     )
 
         self.sync += If(self.switch,
                         If(increment,
@@ -121,13 +123,17 @@ class AddrGen(Module):
                         If(selection == num_addr - 1,
                            selection.eq(0)
                         ).Else(
-                           selection.eq(selection + 1))
+                           selection.eq(selection + 1)
+                        )
                      ).Else(
                         If(increment,
                            If(offset + inc >= max_addr,
                               offset.eq(0)
                            ).Else(
-                              offset.eq(offset + inc))))
+                              offset.eq(offset + inc)
+                           )
+                        )
+                    )
 
 def test_addr_gen():
     device = AddrGen([0, 10], 32, 1)
@@ -156,20 +162,20 @@ def test_addr_gen():
     run_simulation(device, testbench())
 
 
-def test_addr_gen():
-    addrs = []
-    for i in range(1):
-        addrs.append(0x0f800000 + i * 0x400000)
-    dut = AddrGen(addrs, 32, 64)  ## burst size of 16 -> 4 * 16
-    def testbench():
-        for i in range(200):
-            yield dut.switch.eq(0)
+dut = AddrGen(min_valid_low=10)
+def testbench():
+    for i in range(5):
+        yield dut.switch.eq(1)
+        yield
+        yield dut.switch.eq(0)
+        yield
+        for _ in range(100):
             yield dut.data_valid.eq(1)
-            yield 
-            if i == 100:
-                yield dut.switch.eq(1)
-
+            yield
             yield dut.data_valid.eq(0)
             yield
-        
-    run_simulation(dut, testbench(), vcd_name="addr.vcd")
+        for _ in range(20):
+            yield dut.data_valid.eq(0)
+            yield
+    
+run_simulation(dut, testbench(), vcd_name="addr.vcd")
