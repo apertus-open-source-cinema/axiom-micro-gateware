@@ -38,21 +38,22 @@ class AddrGen(Module):
         counter = Signal(bits_for(burst_size), reset = 0)
 
         # write the current buffer adress to a known location, when data valid is low (when we change frames)
-        addr_write_counter = Signal(bits_for(burst_size + min_valid_low))
+        addr_write_counter = Signal(bits_for(burst_size + min_valid_low + 1))
         self.sync += If(~self.data_valid,
-                        If(addr_write_counter < (burst_size + min_valid_low),
+                        If(addr_write_counter < (burst_size + min_valid_low + 1),
                             addr_write_counter.eq(addr_write_counter + 1),
                         )
                     ).Else(
                         addr_write_counter.eq(0),
                     )
 
-        self.comb += If((addr_write_counter > min_valid_low) & (addr_write_counter < (burst_size + min_valid_low)) &  ~self.data_valid,
-                            self.data_out.eq(base_addrs_array[Mux(selection == 0, len(base_addrs) - 1, selection)]),
+        self.comb += If((addr_write_counter > min_valid_low) & (addr_write_counter <= (burst_size + min_valid_low)) &  ~self.data_valid,
+                            # self.data_out.eq(base_addrs_array[Mux(selection == 0, selection - 1, len(base_addrs) - 1)]),
+                            self.data_out.eq(base_addrs_array[Mux(selection == 0, num_addr, selection) - 1]),
                             self.out_addr.eq(buffer_index_addr),
                             self.data_out_valid.eq(True),
                             If(addr_write_counter == (min_valid_low + 1),
-                                self.addr_out_valid(True),
+                                self.addr_out_valid.eq(True),
                             ).Else(
                                 self.addr_out_valid.eq(False),
                             )
@@ -60,7 +61,7 @@ class AddrGen(Module):
                             self.out_addr.eq(self.addr),
                             self.data_out.eq(self.data_in),
                             self.data_out_valid.eq(True),
-                            self.addr_out_valid(self.addr_valid),
+                            self.addr_out_valid.eq(self.addr_valid),
                     ).Else(
                             self.data_out_valid.eq(False),
                             self.addr_valid.eq(False),
@@ -156,20 +157,26 @@ def test_addr_gen():
     run_simulation(device, testbench())
 
 
-def test_addr_gen():
-    addrs = []
-    for i in range(1):
-        addrs.append(0x0f800000 + i * 0x400000)
-    dut = AddrGen(addrs, 32, 64)  ## burst size of 16 -> 4 * 16
-    def testbench():
-        for i in range(200):
+addrs = []
+for i in range(1):
+    addrs.append(0x0f800000 + i * 0x400000)
+dut = AddrGen()  ## burst size of 16 -> 4 * 16
+def testbench():
+    for j in range(10):
+        for i in range(3000):
             yield dut.switch.eq(0)
-            yield dut.data_valid.eq(1)
+
+            if i > 1000 and i < 2000:
+                yield dut.data_valid.eq(0)
+            else:
+                yield dut.data_valid.eq(1)
+
             yield 
             if i == 100:
                 yield dut.switch.eq(1)
 
             yield dut.data_valid.eq(0)
             yield
-        
-    run_simulation(dut, testbench(), vcd_name="addr.vcd")
+
+    
+run_simulation(dut, testbench(), vcd_name="addr.vcd")
