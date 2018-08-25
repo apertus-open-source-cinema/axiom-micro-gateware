@@ -2,14 +2,22 @@ from migen import *
 from migen.genlib.cdc import MultiReg
 from math import ceil
 from tqdm import tqdm
+from cores.logarithmizer import Logarithmizer
 
 from operator import inv
 
 # TODO(robin): implement migen support for indexed part select
 #              (data[offset +: width] where offset can be a Signal)
 
-def hispi_filter_passthrough(config, pixel_data):
-    return (pixel_data >> (config.hispi_bits - config.output_bits))[:config.output_bits]
+def hispi_filter_passthrough(context, config, pixel_data):
+    out = Signal(8)
+    log = Logarithmizer()
+    context.comb += [
+        log.in_data.eq(pixel_data),
+        out.eq(log.out_data)
+    ]
+    context.submodules += log
+    return out
 
 default_config = { 
                     "hispi_bits": 12,
@@ -272,7 +280,7 @@ class HispiDecoder(HispiBase):
                 self.frame_start.eq(found_frame_start),
                 NextValue(found_frame_start, 0),
 
-                [self.data_out[i].eq(self.config.output_filter(self.config, data(lanes[i]))) for i in range(self.config.num_lanes)],
+                [self.data_out[i].eq(self.config.output_filter(self, self.config, data(lanes[i]))) for i in range(self.config.num_lanes)],
 
                 handle_sync_code_coming())
 
@@ -332,10 +340,10 @@ class HispiRx(HispiBase):
 
         self.comb += self.data_out.eq(Cat(*decoder.data_out))
     
-        double_up = ClockDomainsRenamer("hispi")(DoubleUp(config=self.config, data_in=self.data_out, data_valid_in=decoder.data_valid, frame_start_in=decoder.frame_start))
-        self.submodules += double_up
+        self.double_up = ClockDomainsRenamer("hispi")(DoubleUp(config=self.config, data_in=self.data_out, data_valid_in=decoder.data_valid, frame_start_in=decoder.frame_start))
+        self.submodules += self.double_up
 
-        self.ios = set({self.data_in}) | set({double_up.data_valid, double_up.frame_start, double_up.data_out})
+        self.ios = {self.data_in} | {self.double_up.data_valid, self.double_up.frame_start, self.double_up.data_out}
 
 
 passthrough = lambda x: x

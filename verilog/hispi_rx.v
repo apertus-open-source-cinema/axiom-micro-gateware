@@ -47,6 +47,26 @@ reg [23:0] hispimodule1_data1 = 24'd16777215;
 reg [23:0] hispimodule1_data2 = 24'd16777215;
 reg [23:0] hispimodule1_data3 = 24'd16777215;
 reg [23:0] hispimodule1_data4 = 24'd16777215;
+wire [7:0] hispimodule1_out0;
+wire [11:0] hispimodule1_logarithmizer0_in_data;
+wire [7:0] hispimodule1_logarithmizer0_out_data;
+wire [11:0] hispimodule1_logarithmizer0_adr;
+wire [7:0] hispimodule1_logarithmizer0_dat_r;
+wire [7:0] hispimodule1_out1;
+wire [11:0] hispimodule1_logarithmizer1_in_data;
+wire [7:0] hispimodule1_logarithmizer1_out_data;
+wire [11:0] hispimodule1_logarithmizer1_adr;
+wire [7:0] hispimodule1_logarithmizer1_dat_r;
+wire [7:0] hispimodule1_out2;
+wire [11:0] hispimodule1_logarithmizer2_in_data;
+wire [7:0] hispimodule1_logarithmizer2_out_data;
+wire [11:0] hispimodule1_logarithmizer2_adr;
+wire [7:0] hispimodule1_logarithmizer2_dat_r;
+wire [7:0] hispimodule1_out3;
+wire [11:0] hispimodule1_logarithmizer3_in_data;
+wire [7:0] hispimodule1_logarithmizer3_out_data;
+wire [11:0] hispimodule1_logarithmizer3_adr;
+wire [7:0] hispimodule1_logarithmizer3_dat_r;
 wire [31:0] data_out_1;
 reg [67:0] hispimodule2_double_in = 68'd0;
 reg [1:0] hispimodule2_counter = 2'd1;
@@ -70,10 +90,6 @@ reg [1:0] next_value6;
 reg next_value_ce6;
 reg [1:0] next_value7;
 reg next_value_ce7;
-wire [11:0] slice_proxy0;
-wire [11:0] slice_proxy1;
-wire [11:0] slice_proxy2;
-wire [11:0] slice_proxy3;
 (* async_reg = "true", mr_ff = "true", dont_touch = "true" *) reg [11:0] xilinxmultiregimpl0_regs0 = 12'd0;
 (* async_reg = "true", dont_touch = "true" *) reg [11:0] xilinxmultiregimpl0_regs1 = 12'd0;
 (* async_reg = "true", mr_ff = "true", dont_touch = "true" *) reg [11:0] xilinxmultiregimpl1_regs0 = 12'd0;
@@ -111,6 +127,14 @@ always @(*) begin
 	dummy_d <= dummy_s;
 // synthesis translate_on
 end
+assign hispimodule1_logarithmizer0_in_data = hispimodule0_data[(hispimodule0_bit_offset + (4'd12 * (hispimodule0_word_offset + 1'd0)))+:12];
+assign hispimodule1_out0 = hispimodule1_logarithmizer0_out_data;
+assign hispimodule1_logarithmizer1_in_data = hispimodule1_data0[(hispimodule1_bit_offset + (4'd12 * (hispimodule1_word_offset + 1'd0)))+:12];
+assign hispimodule1_out1 = hispimodule1_logarithmizer1_out_data;
+assign hispimodule1_logarithmizer2_in_data = hispimodule2_data[(hispimodule2_bit_offset + (4'd12 * (hispimodule2_word_offset + 1'd0)))+:12];
+assign hispimodule1_out2 = hispimodule1_logarithmizer2_out_data;
+assign hispimodule1_logarithmizer3_in_data = hispimodule3_data[(hispimodule3_bit_offset + (4'd12 * (hispimodule3_word_offset + 1'd0)))+:12];
+assign hispimodule1_out3 = hispimodule1_logarithmizer3_out_data;
 
 // synthesis translate_off
 reg dummy_d_1;
@@ -216,10 +240,10 @@ always @(*) begin
 			hispimodule1_frame_start <= hispimodule1_found_frame_start;
 			hispimodule1_found_frame_start_next_value <= 1'd0;
 			hispimodule1_found_frame_start_next_value_ce <= 1'd1;
-			hispimodule1_hispimodule10 <= slice_proxy0[7:0];
-			hispimodule1_hispimodule11 <= slice_proxy1[7:0];
-			hispimodule1_hispimodule12 <= slice_proxy2[7:0];
-			hispimodule1_hispimodule13 <= slice_proxy3[7:0];
+			hispimodule1_hispimodule10 <= hispimodule1_out0;
+			hispimodule1_hispimodule11 <= hispimodule1_out1;
+			hispimodule1_hispimodule12 <= hispimodule1_out2;
+			hispimodule1_hispimodule13 <= hispimodule1_out3;
 			if ((hispimodule0_data[(hispimodule0_bit_offset + (4'd12 * (hispimodule0_word_offset + 1'd1)))+:36] == 12'd4095)) begin
 				next_state <= 2'd2;
 			end
@@ -234,13 +258,17 @@ always @(*) begin
 	dummy_d_1 <= dummy_s;
 // synthesis translate_on
 end
+assign hispimodule1_logarithmizer0_adr = hispimodule1_logarithmizer0_in_data;
+assign hispimodule1_logarithmizer0_out_data = hispimodule1_logarithmizer0_dat_r;
+assign hispimodule1_logarithmizer1_adr = hispimodule1_logarithmizer1_in_data;
+assign hispimodule1_logarithmizer1_out_data = hispimodule1_logarithmizer1_dat_r;
+assign hispimodule1_logarithmizer2_adr = hispimodule1_logarithmizer2_in_data;
+assign hispimodule1_logarithmizer2_out_data = hispimodule1_logarithmizer2_dat_r;
+assign hispimodule1_logarithmizer3_adr = hispimodule1_logarithmizer3_in_data;
+assign hispimodule1_logarithmizer3_out_data = hispimodule1_logarithmizer3_dat_r;
 assign data_out = {hispimodule2_double_in[65:34], hispimodule2_double_in[31:0]};
 assign data_valid = ((hispimodule2_double_in[32] | hispimodule2_double_in[66]) & hispimodule2_counter[0]);
 assign frame_start = (hispimodule2_double_in[33] | hispimodule2_double_in[67]);
-assign slice_proxy0 = (hispimodule0_data[(hispimodule0_bit_offset + (4'd12 * (hispimodule0_word_offset + 1'd0)))+:12] >>> 3'd4);
-assign slice_proxy1 = (hispimodule1_data0[(hispimodule1_bit_offset + (4'd12 * (hispimodule1_word_offset + 1'd0)))+:12] >>> 3'd4);
-assign slice_proxy2 = (hispimodule2_data[(hispimodule2_bit_offset + (4'd12 * (hispimodule2_word_offset + 1'd0)))+:12] >>> 3'd4);
-assign slice_proxy3 = (hispimodule3_data[(hispimodule3_bit_offset + (4'd12 * (hispimodule3_word_offset + 1'd0)))+:12] >>> 3'd4);
 assign hispimodule0 = xilinxmultiregimpl0_regs1;
 assign hispimodule1 = xilinxmultiregimpl1_regs1;
 assign hispimodule2 = xilinxmultiregimpl2_regs1;
@@ -563,6 +591,46 @@ always @(posedge sys_clk) begin
 		hispimodule02 <= 12'd0;
 		hispimodule03 <= 12'd0;
 	end
+end
+
+reg [7:0] mem[0:4095];
+always @(posedge hispi_clk) begin
+end
+
+assign hispimodule1_logarithmizer0_dat_r = mem[hispimodule1_logarithmizer0_adr];
+
+initial begin
+	$readmemh("mem.init", mem);
+end
+
+reg [7:0] mem_1[0:4095];
+always @(posedge hispi_clk) begin
+end
+
+assign hispimodule1_logarithmizer1_dat_r = mem_1[hispimodule1_logarithmizer1_adr];
+
+initial begin
+	$readmemh("mem_1.init", mem_1);
+end
+
+reg [7:0] mem_2[0:4095];
+always @(posedge hispi_clk) begin
+end
+
+assign hispimodule1_logarithmizer2_dat_r = mem_2[hispimodule1_logarithmizer2_adr];
+
+initial begin
+	$readmemh("mem_2.init", mem_2);
+end
+
+reg [7:0] mem_3[0:4095];
+always @(posedge hispi_clk) begin
+end
+
+assign hispimodule1_logarithmizer3_dat_r = mem_3[hispimodule1_logarithmizer3_adr];
+
+initial begin
+	$readmemh("mem_3.init", mem_3);
 end
 
 endmodule
