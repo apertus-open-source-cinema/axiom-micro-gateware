@@ -162,21 +162,25 @@ def test_addr_gen():
 
     run_simulation(device, testbench())
 
+def test_addr_gen():
+    addrs = []
+    for i in range(1):
+        addrs.append(0x0f800000 + i * 0x400000)
+    dut = AddrGen()  ## burst size of 16 -> 4 * 16
+    def testbench():
+        for j in range(10):
+            for i in range(3000):
+                yield dut.switch.eq(0)
 
-dut = AddrGen(min_valid_low=10)
-def testbench():
-    for i in range(5):
-        yield dut.switch.eq(1)
-        yield
-        yield dut.switch.eq(0)
-        yield
-        for _ in range(100):
-            yield dut.data_valid.eq(1)
-            yield
-            yield dut.data_valid.eq(0)
-            yield
-        for _ in range(20):
-            yield dut.data_valid.eq(0)
-            yield
+                if i > 1000 and i < 2000:
+                    yield dut.data_valid.eq(0)
+                else:
+                    yield dut.data_valid.eq(1)
 
-run_simulation(dut, testbench(), vcd_name="addr.vcd")
+                yield 
+                if i == 100:
+                    yield dut.switch.eq(1)
+
+                yield dut.data_valid.eq(0)
+                yield
+    run_simulation(dut, testbench(), vcd_name="addr.vcd")
